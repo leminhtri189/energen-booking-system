@@ -1,5 +1,4 @@
 using Microsoft.AspNetCore.Mvc;
-using SkinTime.BLL.Services.QuestionService;
 using SkinTime.MVC.Models;
 using System.Diagnostics;
 
@@ -8,7 +7,6 @@ namespace SkinTime.MVC.Controllers
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
-        private readonly IQuestionService questionService;
         public HomeController(ILogger<HomeController> logger)
         {
             _logger = logger;
@@ -16,7 +14,6 @@ namespace SkinTime.MVC.Controllers
 
         public IActionResult Index()
         {
-           var all =  questionService.GetAllQuestion();
             return View();
         }
 
