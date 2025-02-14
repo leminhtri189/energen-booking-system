@@ -14,16 +14,18 @@ namespace SkinTime.BLL.Services.UserService
     public class UserService : IUserService
     {
         private readonly IUnitOfWork _unitOfWork; 
-        public UserService(IUnitOfWork unitOfWork)
+        private readonly IGenericRepository<User> _repository;
+        public UserService(IUnitOfWork unitOfWork, IGenericRepository<User> repository)
         {
             _unitOfWork = unitOfWork;
+            _repository = repository;
         }
 
         public async Task CrateUser(User user)
         {
             user.Id = Guid.NewGuid();
             user.Role = Role.Custommer.ToString();
-            var userRepository = _unitOfWork.Repository<User>().AddAsync(user);
+            var userRepository = _repository.AddAsync(user);
             await _unitOfWork.Complete();
         }
 

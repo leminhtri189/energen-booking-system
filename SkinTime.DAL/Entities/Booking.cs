@@ -24,9 +24,6 @@ namespace SkinTime.DAL.Entities
         [ForeignKey(nameof(Therapist))]
         public Guid? TherapistId { get; set; }
 
-        [ForeignKey(nameof(Voucher))]
-        public Guid? VoucherId { get; set; }
-
         public DateTime ReservedTime { get; set; }
 
         public BookingStatus Status { get; set; } = BookingStatus.NotStarted;
@@ -36,7 +33,6 @@ namespace SkinTime.DAL.Entities
         public virtual Therapist TherapistNavigation { get; set; } = null!;
         public virtual Feedback? FeedbackNavigation { get; set; } = null!;
         public virtual Service ServiceNavigation { get; set; } = null!;
-        public virtual Voucher VoucherNavigation { get; set; } = null!;
         public virtual ICollection<Schedule> ScheduleNavigation { get; set; } = new List<Schedule>();
     }
 }

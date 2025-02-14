@@ -1,5 +1,4 @@
-﻿using Entities;
-using Microsoft.EntityFrameworkCore.Storage.ValueConversion.Internal;
+﻿using Microsoft.EntityFrameworkCore.Storage.ValueConversion.Internal;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -28,7 +27,6 @@ namespace SkinTime.DAL.Entities
         // Virtual properties for relationship navigation
         public virtual ServiceCategory? ServiceCategory { get; set; }
         public virtual ICollection<ServiceRecommendation> ServiceRecommendationNavigation { get; set; } = new Collection<ServiceRecommendation>();
-        public virtual ICollection<ServiceDetail> ServiceDetailNavigation { get; set; } = new Collection<ServiceDetail>();
         public virtual ICollection<ServiceImage> ServiceImageNavigation { get; set; } = new Collection<ServiceImage>();
     }
 }

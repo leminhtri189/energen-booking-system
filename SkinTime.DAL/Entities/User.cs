@@ -39,7 +39,6 @@ namespace SkinTime.DAL.Entities
         // Navigational virtual properties represent entity relationship with other entities.
         public virtual Therapist Therapists { get; set; } = null!;
         public virtual ICollection<Booking> Bookings { get; set; } = new Collection<Booking>();
-        public virtual ICollection<UserChoice> UserChoices { get; set; } = new Collection<UserChoice>();
         public virtual ICollection<EventTicket> EventTickets { get; set; } = new Collection<EventTicket>();
     }
 }

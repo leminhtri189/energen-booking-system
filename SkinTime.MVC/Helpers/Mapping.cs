@@ -1,5 +1,4 @@
 ﻿using AutoMapper;
-using Entities;
 using SkinTime.DAL.Entities;
 
 namespace SkinTime.Helpers

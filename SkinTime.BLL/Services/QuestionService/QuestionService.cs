@@ -40,13 +40,7 @@ namespace SkinTime.BLL.Services.QuestionService
                 return (new Dictionary<SkinType, double>(), new List<Service>());
             }
 
-            var userChoices = questionOptionIds.Select(qid => new UserChoice
-            {
-                UserID = userGuid,
-                QuestionOptionID = qid
-            }).ToList();
-            await _unitOfWork.Repository<UserChoice>().AddRangeAsync(userChoices);
-            await _unitOfWork.Complete();
+          
 
             var allSkinTypes = await _unitOfWork.Repository<SkinType>().ListAsync();
 

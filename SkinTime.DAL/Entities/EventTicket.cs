@@ -20,6 +20,7 @@ namespace SkinTime.DAL.Entities
         public Guid EventTicketID { get; set; }
 
         public virtual Event EventNavigation { get; set; } = null!;
+        public virtual Transaction TransactionNavigation { get; set; }
 
     }
 }

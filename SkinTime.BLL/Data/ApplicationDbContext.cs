@@ -1,5 +1,4 @@
 ﻿using System.Reflection;
-using Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
 using SkinTime.DAL.Entities;
@@ -13,23 +12,19 @@ namespace SkinTime.BLL.Data
 
         public DbSet<ServiceCategory> ServiceCategories { get; set; } = null!;
         public DbSet<Service> Services { get; set; } = null!;
-        public DbSet<ServiceDetail> ServiceDetails { get; set; } = null!;
         public DbSet<ServiceImage> ServiceImages { get; set; } = null!;
 
         public DbSet<User> Users { get; set; } = null!;
         public DbSet<Therapist> Therapists { get; set; } = null!;
 
-        public DbSet<Voucher> Vouchers { get; set; } = null!;
-
         public DbSet<Event> Events { get; set; } = null!;
         public DbSet<EventTicket> EventTickets { get; set; } = null!;
-        public DbSet<TicketTransaction> TicketTransactions { get; set; } = null!;
 
         public DbSet<Booking> Bookings { get; set; } = null!;
         public DbSet<Feedback> Feedbacks { get; set; } = null!;
         public DbSet<Schedule> Schedules { get; set; } = null!;
         public DbSet<Tracking> Trackings { get; set; } = null!;
-        public DbSet<BookingTransaction> BookingTransactions { get; set; } = null!;
+        public DbSet<Transaction> BookingTransactions { get; set; } = null!;
 
         public DbSet<SkinType> SkinTypes { get; set; } = null!;
         public DbSet<ServiceRecommendation> ServiceRecommendation { get; set; } = null!;
@@ -60,13 +55,6 @@ namespace SkinTime.BLL.Data
                 .HasOne(u => u.TherapistNavigation)
                 .WithMany(b => b.TrackingNavigation)
                 .HasForeignKey(b => b.TherapistId)
-                .OnDelete(DeleteBehavior.ClientCascade);
-
-            // Schedule - ServiceDetail M:1
-            builder.Entity<Schedule>()
-                .HasOne(u => u.ServiceDetailNavigation)
-                .WithMany(b => b.ScheduleNavigation)
-                .HasForeignKey(b => b.ServiceDetailId)
                 .OnDelete(DeleteBehavior.ClientCascade);
 
             // Booking - FeedBack 1:1

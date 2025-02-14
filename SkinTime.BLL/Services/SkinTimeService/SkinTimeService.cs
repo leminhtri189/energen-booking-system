@@ -24,7 +24,6 @@ namespace SkinTime.BLL.Services.SkinTimeService
                 var service = await _unitOfWork.Repository<Service>().GetByConditionAsync(
                     filter: s => s.Id == idService,
                     includeProperties: query => query
-                        .Include(s => s.ServiceDetailNavigation)
                         .Include(s => s.ServiceImageNavigation)
                 );
 

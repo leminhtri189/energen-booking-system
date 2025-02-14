@@ -16,7 +16,7 @@ namespace SkinTime.DAL.Entities
         public DateTime? TimeStart { get; set; }
         public DateTime? TimeEnd { get; set; }
         public string? Location{ get;set; }
-        public string? thubmnail { get; set; }
+        public string? Thubmnail { get; set; }
         public bool? IsDeleted { get; set; }
         public virtual ICollection<EventTicket> EventTickets { get; set; }
 

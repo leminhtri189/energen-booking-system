@@ -37,7 +37,7 @@ namespace SkinTime.BLL.Data
         }
 
         public async Task AddAsync(T entity)
-        {// thằng này đơn giản là thêm entity vào db context
+        {
             await _context.Set<T>().AddAsync(entity);
         }
 

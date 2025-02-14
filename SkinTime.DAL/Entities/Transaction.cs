@@ -6,7 +6,7 @@ using System.Text;
 
 namespace SkinTime.DAL.Entities
 {
-    public class BookingTransaction : BaseEntity
+    public class Transaction : BaseEntity
     {
         public string? Description { get; set; }
         public string? Status { get; set; }
@@ -14,6 +14,9 @@ namespace SkinTime.DAL.Entities
         public DateTime? TransactionTime { get; set; }
         public decimal? Amount { get; set; }
         public string? PaymentMethod { get; set; }
+        [ForeignKey("EventTicket")]
+        public virtual Guid? EventTicketId { get; set; }
+        public virtual EventTicket? EventTicket { get; set; }
         [ForeignKey("Booking")]
         public virtual Guid? BookingId { get; set; }
         public virtual Booking? Booking { get; set; }
