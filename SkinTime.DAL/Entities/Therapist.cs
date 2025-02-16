@@ -9,11 +9,14 @@ namespace SkinTime.DAL.Entities
 {
     public class Therapist : BaseEntity
     {
+        [Column("experience_years")]
         public int? ExperienceYears { get; set; }
+        [Column("bio")]
         public string? BIO { get; set; }
+        [Column("status")]
         public string? Status { get; set; }
 
-        [ForeignKey("User")]
+        [ForeignKey("User"),Column("user_id")]
         public Guid UserID {  get; set; }
         public virtual User? Users{ get; set; }
 

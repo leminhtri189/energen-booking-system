@@ -17,8 +17,6 @@ namespace SkinTime.BLL.Data
         public DbSet<User> Users { get; set; } = null!;
         public DbSet<Therapist> Therapists { get; set; } = null!;
 
-        public DbSet<Event> Events { get; set; } = null!;
-        public DbSet<EventTicket> EventTickets { get; set; } = null!;
 
         public DbSet<Booking> Bookings { get; set; } = null!;
         public DbSet<Feedback> Feedbacks { get; set; } = null!;

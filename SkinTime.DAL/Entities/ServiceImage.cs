@@ -9,8 +9,9 @@ namespace SkinTime.DAL.Entities
 {
     public class ServiceImage : BaseEntity
     {
+        [Column("image_url")]
         public string? ImageUrl { get; set; }
-        [ForeignKey("Service")]
+        [ForeignKey("Service"), Column("service_id ")]
         public Guid? ServiceId {  get; set; }
         public virtual Service? Service { get; set; }// khoa ngoai cua moi quan he 1 service co nhieu anh 
     }

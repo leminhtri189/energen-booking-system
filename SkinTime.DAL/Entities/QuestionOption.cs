@@ -9,11 +9,14 @@ namespace SkinTime.DAL.Entities
 {
     public class QuestionOption : BaseEntity
     {
+        [Column("content")]
         public string? Content {  get; set; }
-        public bool? IsDelete { get; set; }
-        [ForeignKey("SkinType")]
+        [Column("is_deleted")]
+        public bool? IsDeleted { get; set; }
+        [ForeignKey("SkinType"),Column("skin_type_id")]
         public Guid SkinTypeID { get; set; }
         public virtual SkinType? SkinType { get; set; }
+        [Column("question_id")]
         public Guid QuestionID { get; set; }
     }
 }

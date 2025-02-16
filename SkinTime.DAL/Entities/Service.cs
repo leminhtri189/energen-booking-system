@@ -1,4 +1,6 @@
-﻿using Microsoft.EntityFrameworkCore.Storage.ValueConversion.Internal;
+﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Storage.ValueConversion.Internal;
+using SkinTime.DAL.Enum;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -15,13 +17,19 @@ namespace SkinTime.DAL.Entities
         [Column("service_name", TypeName = "NVARCHAR")]
         [MaxLength(50)]
         public required string ServiceName { get; set; } = string.Empty;
+        [Column("description")]
         public string Description { get; set; } = string.Empty;
+        [Column("duration")]
         public int Duration { get; set; }
+        [Column("thumbnail")]
         public string Thumbnail { get; set; } = string.Empty;
+        [Column("price",TypeName = "Decimal")]
+        [Precision(16,2)]
         public decimal Price { get; set; }
-        public string? Status { get; set; }
+        [Column("status")]
+        public ServiceStatus? Status { get; set; }
 
-        [ForeignKey(nameof(ServiceCategory))]
+        [ForeignKey(nameof(ServiceCategory)), Column("service_category_id")]
         public Guid ServiceCategoryID { get; set; }
 
         // Virtual properties for relationship navigation

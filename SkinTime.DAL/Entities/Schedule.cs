@@ -13,12 +13,14 @@ namespace SkinTime.DAL.Entities
     {
         [ForeignKey(nameof(Booking)),Column("booking_id")]
         public Guid BookingId{ get; set; }
+        [Column("date")]
         public DateTime Date { get; set; }
+        [Column("reserved_start_time")]
 
         public DateTime ReservedStartTime { get; set; }
-
+        [Column("reserved_end_time")]
         public DateTime ReservedEndTime { get; set; }
-
+        [Column("status")]
         public ScheduleStatus Status { get; set; } = ScheduleStatus.NotStarted;
 
         // Virtual properties

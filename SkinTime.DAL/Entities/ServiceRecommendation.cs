@@ -10,10 +10,10 @@ namespace SkinTime.DAL.Entities
 {
     public class ServiceRecommendation : BaseEntity
     {
-        [ForeignKey("Service")]
+        [ForeignKey("Service"),Column("service_id")]
         public Guid ServiceID { get; set; }
         public virtual Service? Service { get; set; }
-        [ForeignKey("SkinType")]
+        [ForeignKey("SkinType"),Column("skin_type_id")]
         public virtual Guid SkinTypeID{ get; set; }
         public virtual SkinType? SkinType { get; set; }
     }

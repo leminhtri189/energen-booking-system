@@ -14,17 +14,17 @@ namespace SkinTime.BLL.Data
         {
 
             //  Code to use DbContext for MySQL database engine 
-            services.AddDbContext<ApplicationDbContext>(opt => opt.UseMySql(
-                config.GetConnectionString("DefaultConnectionMySQLPRN"),
-                ServerVersion.AutoDetect(config.GetConnectionString("DefaultConnectionMySQLPRN"))
-                ));
+            //services.AddDbContext<ApplicationDbContext>(opt => opt.UseMySql(
+            //    config.GetConnectionString("DefaultConnectionMySQLPRN"),
+            //    ServerVersion.AutoDetect(config.GetConnectionString("DefaultConnectionMySQLPRN"))
+            //    ));
 
             // Code to use DbContext for SQL Server database engine 
-            //services.AddDbContext<ApplicationDbContext>(options =>
-            //{
-            //    options.UseLazyLoadingProxies();
-            //    options.UseSqlServer(config.GetConnectionString("DefaultConnectionPRN"));
-            //});
+            services.AddDbContext<ApplicationDbContext>(options =>
+            {
+                options.UseLazyLoadingProxies();// ae sẽ thay đổi username và passworrd ở appsetting 
+                options.UseSqlServer(config.GetConnectionString("DefaultConnection"));
+            });
 
             return services;
 
