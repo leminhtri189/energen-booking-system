@@ -8580,7 +8580,8 @@ h1, h2, h3, h4, h5,
 .offer-deal {
   width: 100%;
   padding-top: 5em;
-  padding-bottom: 5em; }
+  padding-bottom: 5em; 
+}
   .offer-deal.active {
     background: #faf7ef; }
   .offer-deal .img {
