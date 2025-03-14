@@ -1,0 +1,14 @@
+﻿using BusinessObject.Entities;
+using DataAccessLayer.Commons.GenericRepo;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace DataAccessLayer.Repositories.Interface
+{
+    internal interface IServiceCategoryRepository : IGenericRepository<ServiceCategory>
+    {
+    }
+}
