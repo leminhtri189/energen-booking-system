@@ -1,8 +1,126 @@
 ﻿@{
-    ViewData["Title"] = "Home Page";
+    Layout = "~/Views/Shared/_HomeLayout.cshtml";
 }
+<style>
+    .swiper-container {
+        width: 100%;
+        position: relative;
+        overflow: hidden;
+        padding: 20px 0;
+    }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
-</div>
+    .swiper-wrapper {
+        display: flex; /* Đảm bảo các item nằm trên cùng một hàng */
+    }
+
+    .swiper-slide {
+        flex-shrink: 0;
+        width: 300px; /* Điều chỉnh kích thước tùy ý */
+        margin-right: 15px; /* Khoảng cách giữa các item */
+    }
+
+    .swiper-button-prev, .swiper-button-next {
+        width: 50px;
+        height: 50px;
+        background: rgba(0, 0, 0, 0.5);
+        border-radius: 50%;
+        color: white;
+        font-size: 24px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+        .swiper-button-prev:hover, .swiper-button-next:hover {
+            background: rgba(0, 0, 0, 0.8);
+        }
+
+</style>
+<partial name="_RecommentLayout" />
+@* <div class="container mt-5">
+    <!-- Bộ lọc danh mục -->
+    <div class="d-flex justify-content-end mb-3">
+        <select id="categoryFilter" class="form-select w-auto">
+            <option value="all">All Categories</option>
+            @foreach (var category in Model.Categories)
+            {
+                <option value="@category.Id">@category.Name</option>
+            }
+        </select>
+    </div>
+
+    <!-- Slider dịch vụ -->
+    <div class="swiper-container">
+        <div class="swiper-wrapper">
+            @foreach (var service in Model.Services)
+            {
+                <div class="swiper-slide service-item" data-category="@service.ServiceName">
+                    <div class="col-md-4 d-flex align-items-stretch">
+                        <div class="offer-deal text-center px-2 px-lg-5">
+                            <!-- Biểu tượng filter + loại -->
+                            <div class="d-flex justify-content-between align-items-center px-3 pt-3 pb-3">
+                                <div>
+                                    <i class="fa-solid fa-filter"></i>
+                                    @*                                     <span>@service.Description</span> *@
+          @*                       </div>
+                                <div class="rating">
+                                    ★★★★☆
+                                </div>
+                            </div>
+
+                            <!-- Hình ảnh dịch vụ -->
+                            <div class="img" style="background-image: url(@service.Thumbnail);"></div>
+
+                            <!-- Nội dung -->
+                            <div class="text mt-4">
+                                @* <h3 class="mb-2">@service</h3> *@
+@*                                 <p class="mb-3">@service.Description</p>
+
+                                <!-- Thời gian & giá -->
+                                <div class="d-flex justify-content-between w-100 mb-4">
+                                    <div class="meta-box">
+                                        <i class="fa-regular fa-clock"></i> @service.Duration phút
+                                    </div>
+                                    <div class="meta-box">
+                                        <i class="fa-solid fa-dollar-sign"></i> @service.Price VND
+                                    </div>
+                                </div>
+
+                                <!-- Nút đặt lịch -->
+                                <p>
+                                    <a href="@Url.Action("Index", "Booking")?id=@service.Id"
+                                       class="btn btn-primary px-4 py-3">
+                                        Booking Now!<span class="ion-ios-arrow-round-forward"></span>
+                                    </a>
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+
+        <!-- Nút điều hướng -->
+        <div class="swiper-button-prev"></div>
+        <div class="swiper-button-next"></div>
+    </div>
+</div>  *@ 
+<partial name="_InformationHomeLayout" />
+<script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        var swiper = new Swiper(".swiper-container", {
+            slidesPerView: 4, // Hiển thị 3 dịch vụ mỗi hàng
+            spaceBetween: 20, // Khoảng cách giữa các item
+            loop: true, // Cho phép trượt vô hạn
+            autoplay: {
+                delay: 3000, // Tự động trượt sau 3 giây
+            },
+            navigation: {
+                nextEl: ".swiper-button-next",
+                prevEl: ".swiper-button-prev",
+            },
+        });
+    });
+</script>
+
