@@ -13,6 +13,6 @@ namespace BusinessObject.Entities
 
         public virtual ICollection<QuestionOption> QuestionOptionNavigation { get; set; } = new List<QuestionOption>();
 
-        public virtual ICollection<ServiceRecommendation> RecommendationNavigation { get; set; } = new List<ServiceRecommendation>();
+        public virtual ICollection<Service> Services { get; set; } = new List<Service>();
     }
 }

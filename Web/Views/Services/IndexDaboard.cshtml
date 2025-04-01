@@ -1,0 +1,117 @@
+﻿@model IEnumerable<Web.Models.ServicesViewModel>
+
+@{
+    ViewData["Title"] = "Services";
+    Layout = "~/Views/Shared/_ManageAndDashBoardLayout.cshtml";
+}
+
+<h1>Services</h1>
+<a href="#" class="btn btn-primary mb-3" data-bs-toggle="modal" data-bs-target="#createServiceModal">Create New Service</a>
+
+<table class="table table-bordered table-striped">
+    <thead>
+        <tr>
+            <th>Service Name</th>
+            <th>Description</th>
+            <th>Duration</th>
+            <th>Price</th>
+            <th>Category</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var service in Model)
+        {
+            <tr>
+                <td>@service.ServiceName</td>
+                <td>@service.Description</td>
+                <td>@service.Duration min</td>
+                <td>@service.Price$</td>
+                <td>@service.CategotyName</td>
+                <td>
+                    <a asp-action="Details" asp-route-id="@service.Id" class="btn btn-info btn-sm">View</a>
+                    <a asp-action="Edit" asp-route-id="@service.Id" class="btn btn-warning btn-sm">Edit</a>
+                    <a asp-action="Delete" asp-route-id="@service.Id" class="btn btn-danger btn-sm" onclick="return confirm('Are you sure?')">Delete</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<!-- Modal for Creating Service -->
+<!-- Modal -->
+<div class="modal fade" id="createServiceModal" tabindex="-1" aria-labelledby="createServiceModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="createServiceModalLabel">Create New Service</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <!-- Bước 1 -->
+                <div id="step1">
+                    <h4>Step 1: Enter Service Details</h4>
+                    <div class="mb-3">
+                        <label for="serviceName" class="form-label">Service Name</label>
+                        <input type="text" class="form-control" id="serviceName">
+                    </div>
+                    <div class="mb-3">
+                        <label for="description" class="form-label">Description</label>
+                        <textarea class="form-control" id="description"></textarea>
+                    </div>
+                    <button type="button" class="btn btn-primary" id="nextStep">Next</button>
+                </div>
+
+                <!-- Bước 2 (Ẩn ban đầu) -->
+                <div id="step2" style="display: none;">
+                    <h4>Step 2: Upload Images</h4>
+                    <div class="mb-3">
+                        <label for="thumbnail" class="form-label">Thumbnail</label>
+                        <input type="file" class="form-control" id="thumbnail">
+                    </div>
+                    <div class="mb-3">
+                        <label for="images" class="form-label">Upload Additional Images</label>
+                        <input type="file" class="form-control" id="images" multiple>
+                    </div>
+                    <div id="imagePreview" class="d-flex"></div> <!-- Ảnh preview sẽ hiển thị ở đây -->
+
+                    <button type="button" class="btn btn-secondary" id="prevStep">Back</button>
+                    <button type="button" class="btn btn-success">Submit</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@section Scripts {
+    <script>
+                document.getElementById("nextStep").addEventListener("click", function () {
+            document.getElementById("step1").style.display = "none";
+            document.getElementById("step2").style.display = "block";
+        });
+
+        document.getElementById("prevStep").addEventListener("click", function () {
+            document.getElementById("step2").style.display = "none";
+            document.getElementById("step1").style.display = "block";
+        });
+
+                document.getElementById("images").addEventListener("change", function (event) {
+            let previewContainer = document.getElementById("imagePreview");
+            previewContainer.innerHTML = ""; // Xóa các ảnh cũ trước khi thêm mới
+
+            for (let file of event.target.files) {
+                let reader = new FileReader();
+                reader.onload = function (e) {
+                    let img = document.createElement("img");
+                    img.src = e.target.result;
+                    img.style.width = "100px"; // Điều chỉnh kích thước ảnh
+                    img.style.marginRight = "10px";
+                    previewContainer.appendChild(img);
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+
+    </script>
+}

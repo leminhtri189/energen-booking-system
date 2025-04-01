@@ -1,6 +1,8 @@
 ﻿using BusinessObject.Entities;
 using DataAccessLayer.Commons.GenericRepo;
 using DataAccessLayer.Context;
+using DataAccessLayer.Repositories.Implementation;
+using DataAccessLayer.Repositories.Interface;
 using System.Collections;
 
 namespace DataAccessLayer.UoW
@@ -8,13 +10,23 @@ namespace DataAccessLayer.UoW
     public class UnitOfWork : IUnitOfWork
     {
         private readonly ApplicationDbContext _context;
+        public IBookingRepository Bookings { get; private set; }
+
+        public IQuestionRepository Questions { get; private set; }
+
+        public ITransactionRepo Transactions { get; private set; }
 
         private Hashtable? _repositories;
 
         public UnitOfWork(ApplicationDbContext context)
         {
+
             _context = context;
+            Bookings = new BookingRepository(context);
+            Questions = new QuestionRepository(context);
+            Transactions = new TransactionRepo(context);
         }
+
 
         public async Task<int> CompleteAsync()
         {

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using BusinessObject.Entities;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -6,7 +7,8 @@ using System.Threading.Tasks;
 
 namespace BusinessLogicLayer.Services.Interface
 {
-    public class ISkinTypeService
+     public interface ISkinTypeService
     {
+        Task<IEnumerable<SkinType>> GetSkinTypes();
     }
 }

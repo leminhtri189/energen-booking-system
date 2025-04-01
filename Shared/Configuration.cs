@@ -12,7 +12,8 @@ namespace Shared
             services.AddScoped<ITokenUtilities, TokenUtilities>();
 
             services.AddScoped<IEmailUtilities, EmailUtilities>();
-
+           // var PayPal = configurations.GetSection("PayPal");
+          //  services.<PayPal>(PayPal);
             return services;
         }
     }

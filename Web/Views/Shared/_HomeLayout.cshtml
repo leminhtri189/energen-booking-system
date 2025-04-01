@@ -9,51 +9,28 @@
 
     <link href="https://fonts.googleapis.com/css?family=Prata&display=swap" rel="stylesheet">
 
-    <link rel="stylesheet" href="css/open-iconic-bootstrap.min.css">
-    <link rel="stylesheet" href="css/animate.css">
-    <link rel="stylesheet" href="css/owl.carousel.min.css">
-    <link rel="stylesheet" href="css/owl.theme.default.min.css">
-    <link rel="stylesheet" href="css/magnific-popup.css">
+    <link rel="stylesheet" href="~/css/open-iconic-bootstrap.min.css">
+    <link rel="stylesheet" href="~/css/animate.css">
+    <link rel="stylesheet" href="~/css/owl.carousel.min.css">
+    <link rel="stylesheet" href="~/css/owl.theme.default.min.css">
+    <link rel="stylesheet" href="~/css/magnific-popup.css">
 
-    <link rel="stylesheet" href="css/aos.css">
+    <link rel="stylesheet" href="~/css/aos.css">
 
-    <link rel="stylesheet" href="css/ionicons.min.css">
+    <link rel="stylesheet" href="~/css/ionicons.min.css">
 
-    <link rel="stylesheet" href="css/bootstrap-datepicker.css">
-    <link rel="stylesheet" href="css/jquery.timepicker.css">
+    <link rel="stylesheet" href="~/css/bootstrap-datepicker.css">
+    <link rel="stylesheet" href="~/css/jquery.timepicker.css">
 
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-    <link rel="stylesheet" href="css/flaticon.css">
-    <link rel="stylesheet" href="css/icomoon.css">
-    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="~/https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="~/css/flaticon.css">
+    <link rel="stylesheet" href="~/css/icomoon.css">
+    <link rel="stylesheet" href="~/css/style.css">
 </head>
 <body>
-    <partial name="_Header"/> @* phần header *@
-    <!-- END nav -->
-
-    <section class="hero-wrap js-fullheight" style="background-image: url('images/bg_1.jpg');" data-stellar-background-ratio="0.5">
-        <div class="overlay"></div>
-        <div class="container">
-            <div class="row no-gutters slider-text js-fullheight align-items-center justify-content-center">
-                <div class="col-md-10 ftco-animate text-center">
-                    <div class="icon">
-                        <span class="flaticon-lotus"></span>
-                    </div>
-                    <h1>Spa &amp; Beauty Center</h1>
-                    <div class="row justify-content-center">
-                        <div class="col-md-7 mb-3">
-                            <p>Far far away, behind the word mountains, far from the countries Vokalia and Consonantia, there live the blind texts.</p>
-                        </div>
-                    </div>
-                    <p>
-                        <a href="#" class="btn btn-primary p-3 px-5 py-4 mr-md-2">Get in Touch</a>
-                        <a href="#" class="btn btn-outline-primary p-3 px-5 py-4 ml-md-2">Contact</a>
-                    </p>
-                </div>
-            </div>
-        </div>
-    </section>
-    <div class="wrapper" style="display: flex; flex-direction: column; min-height: 100vh;">
+    <partial name="_Header"/>
+    <partial name="_Thumbnail" />
+    <div id="services-section" class="wrapper" style="display: flex; flex-direction: column; min-height: 100vh;">
         <div style="flex: 1">
             @RenderBody()
         </div>
@@ -63,23 +40,50 @@
     <div id="ftco-loader" class="show fullscreen"><svg class="circular" width="48px" height="48px"><circle class="path-bg" cx="24" cy="24" r="22" fill="none" stroke-width="4" stroke="#eeeeee" /><circle class="path" cx="24" cy="24" r="22" fill="none" stroke-width="4" stroke-miterlimit="10" stroke="#F96D00" /></svg></div>
 
 
-    <script src="js/jquery.min.js"></script>
-    <script src="js/jquery-migrate-3.0.1.min.js"></script>
-    <script src="js/popper.min.js"></script>
-    <script src="js/bootstrap.min.js"></script>
-    <script src="js/jquery.easing.1.3.js"></script>
-    <script src="js/jquery.waypoints.min.js"></script>
-    <script src="js/jquery.stellar.min.js"></script>
-    <script src="js/owl.carousel.min.js"></script>
-    <script src="js/jquery.magnific-popup.min.js"></script>
-    <script src="js/aos.js"></script>
-    <script src="js/jquery.animateNumber.min.js"></script>
-    <script src="js/bootstrap-datepicker.js"></script>
-    <script src="js/jquery.timepicker.min.js"></script>
-    <script src="js/scrollax.min.js"></script>
-    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBVWaKrjvy3MaE7SQ74_uJiULgl1JY0H2s&sensor=false"></script>
-    <script src="js/google-map.js"></script>
-    <script src="js/main.js"></script>
+    <script src="~/js/jquery.min.js"></script>
+    <script src="~/js/jquery-migrate-3.0.1.min.js"></script>
+    <script src="~/js/popper.min.js"></script>
+    <script src="~/js/bootstrap.min.js"></script>
+    <script src="~/js/jquery.easing.1.3.js"></script>
+    <script src="~/js/jquery.waypoints.min.js"></script>
+    <script src="~/js/jquery.stellar.min.js"></script>
+    <script src="~/js/owl.carousel.min.js"></script>
+    <script src="~/js/jquery.magnific-popup.min.js"></script>
+    <script src="~/js/aos.js"></script>
+    <script src="~/js/jquery.animateNumber.min.js"></script>
+    <script src="~/js/bootstrap-datepicker.js"></script>
+    <script src="~/js/jquery.timepicker.min.js"></script>
+    <script src="~/js/scrollax.min.js"></script>
+  @*   <script src=" https ://maps.googleapis.c om/maps/api/js?key=AIzaSyBVWaKrjvy3MaE7S Q74_uJiULgl1JY0H2s&sensor=false"></script> *@
+    <script src="~/js/google-map.js"></script>
+    <script src="~/js/main.js"></script>
+    <script>
+                    document.addEventListener("DOMContentLoaded", function () {
+            let servicesLink = document.getElementById("servicesLink");
+
+            if (servicesLink) {
+                servicesLink.addEventListener("click", function (event) {
+                    if (window.location.pathname !== "/") {
+                        event.preventDefault();
+                        window.location.href = "/#services-section";
+                    }
+                });
+
+                // Kiểm tra nếu URL có chứa "#services-section" => Cuộn xuống ngay sau khi load trang
+                if (window.location.hash === "#services-section") {
+                    let targetSection = document.querySelector("#services-section");
+                    if (targetSection) {
+                        setTimeout(() => {
+                            targetSection.scrollIntoView({ behavior: "smooth" });
+                        }, 500);
+                    }
+                }
+            }
+        });
+
+
+    </script> 
+
 
 </body>
 </html>

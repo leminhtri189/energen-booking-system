@@ -1,6 +1,7 @@
 ﻿using System.Reflection;
 using BusinessObject.Entities;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 
 namespace DataAccessLayer.Context
 {
@@ -8,7 +9,7 @@ namespace DataAccessLayer.Context
     {
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
             : base(options) { }
-
+        public ApplicationDbContext() { }
         public DbSet<ServiceCategory> ServiceCategories { get; set; } = null!;
 
         public DbSet<Service> Services { get; set; } = null!;
@@ -25,9 +26,7 @@ namespace DataAccessLayer.Context
 
         public DbSet<Transaction> BookingTransactions { get; set; } = null!;
 
-        public DbSet<SkinType> SkinTypes { get; set; } = null!;
-
-        public DbSet<ServiceRecommendation> ServiceRecommendation { get; set; } = null!;
+        public DbSet<SkinType> SkinTypes { get; set; } = null!;      
 
         public DbSet<Question> Questions { get; set; } = null!;
 
@@ -40,22 +39,19 @@ namespace DataAccessLayer.Context
             builder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
             base.OnModelCreating(builder);
         }
-        /*protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        private string GetConnectionString()
         {
-            optionsBuilder.UseLazyLoadingProxies();
-            base.OnConfiguring(optionsBuilder);
-        }*/
-
-
+            IConfiguration configuration = new ConfigurationBuilder()
+                    .SetBasePath(Directory.GetCurrentDirectory())
+                    .AddJsonFile("appsettings.json").Build();
+            return configuration["ConnectionStrings:SQLServer"];
+        }
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            optionsBuilder.UseLazyLoadingProxies();
-            if (!optionsBuilder.IsConfigured)
-            {
-                optionsBuilder.UseSqlServer("Server=127.0.0.1;Database=skintimeDbt;User=sa;Password=12345;TrustServerCertificate=true");
-            }
+            optionsBuilder.UseSqlServer(GetConnectionString());
             optionsBuilder.UseLazyLoadingProxies();
             base.OnConfiguring(optionsBuilder);
+
         }
     }
 }

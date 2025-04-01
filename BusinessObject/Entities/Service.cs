@@ -11,16 +11,16 @@ namespace BusinessObject.Entities
     {
         [Column("service_name", TypeName = "NVARCHAR")]
         [MaxLength(50)]
-        public required string ServiceName { get; set; } = string.Empty;
+        public required string ServiceName { get; set; } = string.Empty;//
         [Column("description")]
-        public string Description { get; set; } = string.Empty;
+        public string Description { get; set; } = string.Empty;//
         [Column("duration")]
-        public int Duration { get; set; }
+        public int Duration { get; set; }//
         [Column("thumbnail")]
-        public string Thumbnail { get; set; } = string.Empty;
+        public string Thumbnail { get; set; } = string.Empty;//
         [Column("price",TypeName = "Decimal")]
         [Precision(16,2)]
-        public decimal Price { get; set; }
+        public decimal Price { get; set; }//
         [Column("status")]
         public ServiceStatus Status { get; set; }
 
@@ -28,8 +28,8 @@ namespace BusinessObject.Entities
         public Guid ServiceCategoryId { get; set; }
 
         // Virtual properties for relationship navigation
-        public virtual ServiceCategory? ServiceCategoryNavigation { get; set; }
-        public virtual ICollection<ServiceRecommendation> ServiceRecommendationNavigation { get; set; } = new Collection<ServiceRecommendation>();
-        public virtual ICollection<ServiceImage> ServiceImageNavigation { get; set; } = new Collection<ServiceImage>();
+        public virtual ServiceCategory? ServiceCategoryNavigation { get; set; }// NGOAI 
+        public virtual ICollection<SkinType> SkinTypes { get; set; } = new Collection<SkinType>();// TRONG
+        public virtual ICollection<ServiceImage> ServiceImageNavigation { get; set; } = new Collection<ServiceImage>();// TRONG
     }
 }

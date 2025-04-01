@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace BusinessObject.Entities
 {
-    [Table("transaction")]
+    [Table("Transaction")]
     public class Transaction : BaseEntity
     {
         [Column("transaction_time")]
@@ -11,12 +11,12 @@ namespace BusinessObject.Entities
 
         [Column("amount", TypeName = "Decimal(16,2)")]
         public decimal? Amount { get; set; }
-
         [Column("is_refund")]
-        public bool Status { get; set; }
+        public bool IsRefund { get; set; }
 
-        [Column("payment_method")]
-        public PaymentMethod PaymentMethod { get; set; }
+
+        [Column("status")]
+        public PaymentStatus Status { get; set; }
 
         [ForeignKey(nameof(Booking)),Column("booking_id")]
         public Guid BookingId { get; set; }

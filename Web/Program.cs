@@ -28,6 +28,7 @@ namespace Web
                 });
 
             // Add services to the container.
+            appServices.AddAutoMapper(typeof(Program));
             builder.Services.AddControllersWithViews();
 
             var app = builder.Build();

@@ -1,4 +1,6 @@
+using AutoMapper;
 using BusinessLogicLayer.Services.Interface;
+using BusinessObject.Entities;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
 using Web.Models;
@@ -7,27 +9,24 @@ namespace Web.Controllers
 {
     public class HomeController : Controller
     {
-        private readonly ILogger<HomeController> _logger;
+        private readonly ISkinTimeService _skinTimeService;
+        private readonly IMapper _mapper;
 
-        public HomeController(ILogger<HomeController> logger, IUserService userService)
+        public HomeController(ISkinTimeService skinTimeService,IMapper mapper)
         {
-            _logger = logger;
+          _mapper = mapper;
+            _skinTimeService = skinTimeService;
         }
 
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
             return View();
+
         }
 
         public IActionResult Privacy()
         {
             return View();
-        }
-
-        [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
-        public IActionResult Error()
-        {
-            return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
         }
     }
 }
