@@ -1,5 +1,6 @@
 using BusinessLogicLayer;
 using DataAccessLayer;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Shared;
 using Web.Hubs;
 
@@ -18,7 +19,18 @@ namespace Web
             .ConfigureDataAccessLayer(appConfiguration)
             .ConfigureBusinessLogicLayer(appConfiguration)
             .ConfigureSharedLibrary(appConfiguration);
+
+            appServices.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+                .AddCookie(config => {
+                    config.Cookie.Name = "cookie";
+                    config.LoginPath = "/Account/Login";
+                    config.AccessDeniedPath = "/Account/Login";
+                    config.ExpireTimeSpan = TimeSpan.FromMinutes(30);
+                });
+
+            // Add services to the container.
             appServices.AddSignalR();
+            appServices.AddAutoMapper(typeof(Program));
             appServices.AddAutoMapper(typeof(Program));
             builder.Services.AddControllersWithViews();
 

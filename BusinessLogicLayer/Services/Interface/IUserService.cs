@@ -20,9 +20,11 @@ namespace BusinessLogicLayer.Services.Interface
 
         public Task<PaginationResult<User>> GetUserByRole(Role role, int page = 1, int page_size = 10);
 
-        public Task<ServiceResult> CreateUserAccount(string username, string email, string password, Role user_role);
+        Task<User?> GetUserWithEmail(string email, string password);
 
-        public Task<ServiceResult> UpdateUserProfile(Guid id, User user);
+        public Task<ServiceResult> CreateUserAccount(string email, string password, string fullname, string phone, Gender gender, Role role);
+
+        public Task<ServiceResult> UpdateUserProfile(Guid id, string? username = null, string? email = null, string? fullname = null, string? phone = null, Gender? gender = null, Role? role = null, UserStatus? status = null);
 
         public Task<ServiceResult> DeleteUser(Guid id);
     }

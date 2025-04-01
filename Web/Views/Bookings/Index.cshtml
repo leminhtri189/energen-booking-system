@@ -24,63 +24,63 @@
     transform: scale(1.05);
     }
     .chuyen-vien-card {
-    border: 1px solid #ddd;
-    border-radius: 8px;
-    padding: 15px;
-    margin: 10px;
-    text-align: center;
-    height: 100%;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        padding: 15px;
+        margin: 10px;
+        text-align: center;
+        height: 100%;
     }
 
-    .chuyen-vien-card img {
-    width: 50px;
-    height: 50px;
-    border-radius: 50%;
-    }
+        .chuyen-vien-card img {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+        }
 
     .carousel-control-prev, .carousel-control-next {
-    width: 5%;
+        width: 5%;
     }
 
     .calendar {
-    margin-top: 20px;
+        margin-top: 20px;
     }
 
-    .calendar .day {
-    padding: 10px;
-    margin: 5px;
-    border: 1px solid #ddd;
-    border-radius: 5px;
-    cursor: pointer;
-    text-align: center;
-    width: 80px;
-    }
+        .calendar .day {
+            padding: 10px;
+            margin: 5px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            cursor: pointer;
+            text-align: center;
+            width: 80px;
+        }
 
-    .calendar .day.active {
-    background-color: #007bff;
-    color: white;
-    }
+            .calendar .day.active {
+                background-color: #007bff;
+                color: white;
+            }
 
-    .calendar .time-slot {
-    padding: 10px;
-    margin: 5px;
-    border: 1px solid #ddd;
-    border-radius: 5px;
-    cursor: pointer;
-    text-align: center;
-    width: 80px;
-    }
+        .calendar .time-slot {
+            padding: 10px;
+            margin: 5px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            cursor: pointer;
+            text-align: center;
+            width: 80px;
+        }
 
-    .calendar .time-slot.disabled {
-    background-color: #f0f0f0;
-    cursor: not-allowed;
-    }
+            .calendar .time-slot.disabled {
+                background-color: #f0f0f0;
+                cursor: not-allowed;
+            }
 
     .calendar-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 10px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 10px;
     }
 </style>
 
@@ -110,22 +110,24 @@
 
     <h3 class="text-center">Select Therapist</h3>
 
+    <h3>Chọn chuyên viên</h3>
     <div id="therapistCarousel" class="carousel slide" data-bs-ride="carousel">
         <div class="carousel-inner" id="therapistContainer">
             <!-- Dữ liệu therapists sẽ được load vào đây -->
         </div>
 
         <!-- Nút Previous -->
-        <button class="carousel-control-prev" type="button" data-bs-target="#therapistCarousel" data-bs-slide="prev">
-            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-            <span class="visually-hidden">Previous</span>
-        </button>
+            <button class="carousel-control-prev" type="button" data-bs-target="#therapistCarousel" data-bs-slide="prev">
+                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                <span class="visually-hidden">Previous</span>
+            </button>
 
         <!-- Nút Next -->
-        <button class="carousel-control-next" type="button" data-bs-target="#therapistCarousel" data-bs-slide="next">
-            <span class="carousel-control-next-icon" aria-hidden="true"></span>
-            <span class="visually-hidden">Next</span>
-        </button>
+            <button class="carousel-control-next" type="button" data-bs-target="#therapistCarousel" data-bs-slide="next">
+                <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                <span class="visually-hidden">Next</span>
+            </button>
+        }
     </div>
 
 
@@ -300,7 +302,7 @@
         });
     }
 
-                     function thanhToan() {
+        function thanhToan() {
         if (!selectedDate) {
             alert("Vui lòng chọn đầy đủ chuyên viên, ngày và giờ trước khi thanh toán!");
             return;
@@ -337,18 +339,18 @@
     });
         function thanhToan() {
         if (!selectedDate) {
-            alert("Vui lòng chọn đầy đủ chuyên viên, ngày và giờ trước khi thanh toán!");
-            return;
-        }
+                alert("Vui lòng chọn đầy đủ chuyên viên, ngày và giờ trước khi thanh toán!");
+                return;
+            }
 
-        let serviceId = document.getElementById("serviceId").value;
+            let serviceId = document.getElementById("serviceId").value;
 
-        let bookingData = {
-            serviceId: serviceId,
-            therapistId: selectedChuyenVienId,
-            selectedDate: selectedDate,
-            selectedTime: selectedTime
-        };
+            let bookingData = {
+                serviceId: serviceId,
+                therapistId: selectedChuyenVienId,
+                selectedDate: selectedDate,
+                selectedTime: selectedTime
+            };
 
         console.log("bookingData", bookingData);
 
@@ -386,7 +388,7 @@
                 type: "GET",
                 success: function (data) {
                     $("#therapistContainer").html(data);
-                }
+    }
             });
         }
 

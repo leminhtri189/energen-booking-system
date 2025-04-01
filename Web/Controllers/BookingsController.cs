@@ -31,7 +31,7 @@ namespace Web.Controllers
             _skinTimeService = skinTimeService;
             _mapper = mapper;
             _therapistService = therapistService;
-            _bookingService = bookingService;
+            _bookingService = bookingService;   
             _hubContext = hubContext;
         }
 
