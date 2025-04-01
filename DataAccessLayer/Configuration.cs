@@ -1,5 +1,7 @@
 ﻿using DataAccessLayer.Commons.GenericRepo;
 using DataAccessLayer.Context;
+using DataAccessLayer.Repositories.Implementation;
+using DataAccessLayer.Repositories.Interface;
 using DataAccessLayer.UoW;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -16,6 +18,9 @@ namespace DataAccessLayer
 
             services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
             services.AddScoped<IUnitOfWork, UnitOfWork>();
+            services.AddScoped<IServiceRepository, ServiceRepository>();
+            services.AddScoped<IQuestionRepository, QuestionRepository>();
+            services.AddScoped<ITherapistRepository, TherapistRepository>();
 
             return services;
         }

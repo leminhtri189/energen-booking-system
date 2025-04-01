@@ -1,0 +1,78 @@
+﻿@model IEnumerable<Web.Models.ServiceRecommendationViewModel>
+
+@{
+    Layout = "~/Views/Shared/_HomeLayout.cshtml";
+}
+
+<div class="container mt-5">
+    <h2 class="text-center mb-4">Phân Tích Loại Da & Dịch Vụ Gợi Ý</h2>
+
+    @foreach (var viewModel in Model)
+    {
+        <!-- Phần Phân Tích Loại Da -->
+        <div class="card p-4 shadow-sm mb-4">
+            <h4 class="mb-3">Kết Quả Phân Tích Loại Da</h4>
+            @foreach (var item in viewModel.SkinTypes)
+            {
+                <div class="mb-2">
+                    <strong>@item.Key:</strong> @item.Value%
+                    <div class="progress mt-1">
+                        <div class="progress-bar bg-success" role="progressbar" style="width: @item.Value%;" aria-valuenow="@item.Value" aria-valuemin="0" aria-valuemax="100"></div>
+                    </div>
+                </div>
+            }
+        </div>
+
+        <!-- Phần Gợi Ý Dịch Vụ -->
+        <div class="card p-4 shadow-sm">
+            <h4 class="mb-3">Dịch Vụ Đề Xuất</h4>
+
+            @if (viewModel.Services != null && viewModel.Services.Any())
+            {
+                <div class="row">
+                    @foreach (var service in viewModel.Services)
+                    {
+                        <div class="col-md-4 mb-4">
+                            <div class="card service-card">
+                                <img src="@service.Thumbnail" class="card-img-top" alt="@service.ServiceName">
+                                <div class="card-body">
+                                    <h5 class="card-title">@service.ServiceName</h5>
+                                    <p class="card-text text-muted">@service.Description</p>
+                                    <p class="card-price text-primary"><strong>@service.Price.ToString("C")</strong></p>
+                                    <a href="#" class="btn btn-primary">Đặt lịch ngay</a>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                </div>
+            }
+            else
+            {
+                <p class="text-muted">Không có dịch vụ nào phù hợp.</p>
+            }
+        </div>
+    }
+</div>
+
+<!-- CSS -->
+<style>
+    .service-card {
+        border-radius: 10px;
+        overflow: hidden;
+        transition: transform 0.3s;
+    }
+
+        .service-card:hover {
+            transform: scale(1.05);
+        }
+
+        .service-card img {
+            height: 200px;
+            object-fit: cover;
+        }
+
+    .card-price {
+        font-size: 18px;
+        font-weight: bold;
+    }
+</style>
