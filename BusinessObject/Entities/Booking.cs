@@ -16,19 +16,16 @@ namespace BusinessObject.Entities
         public Guid? TherapistId { get; set; }
 
         [Column("reserved_date")]
-        public DateTime ReservedDate{ get; set; }
-
-        [Column("total_payment", TypeName = "Decimal(16,2)")]
-        public decimal TotalPayment { get; set; }
+        public DateOnly ReservedDate{ get; set; }
 
         [Column("status")]
         public BookingStatus Status { get; set; } = BookingStatus.NotStarted;
 
         [Column("reserved_start_time")]
-        public DateTime ReservedStartTime { get; set; }
+        public TimeOnly ReservedStartTime { get; set; }
 
         [Column("reserved_end_time")]
-        public DateTime ReservedEndTime { get; set; }
+        public TimeOnly ReservedEndTime { get; set; }
 
         [Column("checkin_time")]
         public DateTime? CheckinTime { get; set; }

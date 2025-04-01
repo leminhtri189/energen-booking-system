@@ -1,6 +1,7 @@
 using BusinessLogicLayer;
 using DataAccessLayer;
 using Shared;
+using Web.Hubs;
 
 namespace Web
 {
@@ -17,6 +18,7 @@ namespace Web
             .ConfigureDataAccessLayer(appConfiguration)
             .ConfigureBusinessLogicLayer(appConfiguration)
             .ConfigureSharedLibrary(appConfiguration);
+            appServices.AddSignalR();
             appServices.AddAutoMapper(typeof(Program));
             builder.Services.AddControllersWithViews();
 
@@ -33,7 +35,7 @@ namespace Web
             app.UseStaticFiles();
 
             app.UseRouting();
-
+            app.MapHub<BookingHub>("/chatHub");
             app.UseAuthorization();
 
             app.MapControllerRoute(

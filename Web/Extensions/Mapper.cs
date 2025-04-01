@@ -18,9 +18,12 @@ namespace Web.Extensions
                 .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id))
                 .ForMember(dest => dest.AnswerContent, opt => opt.MapFrom(src => src.Content));
             CreateMap<Booking, BookingServiceViewModel>()
-                .ForMember(dest => dest.SelectedDate, opt => opt.MapFrom(src => src.ReservedDate))
-                .ForMember(dest => dest.SelectedTime, opt => opt.MapFrom(src => src.ReservedStartTime))
-                .ReverseMap();
+                .ForMember(dest => dest.SelectedDate, opt => opt.MapFrom(src => src.ReservedDate.ToString("yyyy-MM-dd")))
+                .ForMember(dest => dest.SelectedTime, opt => opt.MapFrom(src => src.ReservedStartTime.ToString("HH:mm")))
+                .ReverseMap()
+                .ForMember(dest => dest.ReservedDate, opt => opt.MapFrom(src => DateOnly.Parse(src.SelectedDate)))
+                .ForMember(dest => dest.ReservedStartTime, opt => opt.MapFrom(src => TimeOnly.Parse(src.SelectedTime)));
+
         }
     }
 }

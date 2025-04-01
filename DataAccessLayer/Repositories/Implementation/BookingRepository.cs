@@ -15,15 +15,14 @@ namespace DataAccessLayer.Repositories.Implementation
     {
         public BookingRepository(ApplicationDbContext context) : base(context) { }
 
+
+
         public async Task<IDictionary<TimeOnly, bool>> GetTherapistSchedule(Guid therapistId, string date)
         {
-            if (!DateTime.TryParse(date, out DateTime selectedDate))
+            if (!DateOnly.TryParse(date, out DateOnly selectedDate))
             {
                 throw new ArgumentException("Invalid date format", nameof(date));
             }
-
-            DateOnly selectedDateOnly = DateOnly.FromDateTime(selectedDate);
-
             var schedules = await ((ApplicationDbContext)context).Bookings
                 .Where(b => b.TherapistId == therapistId && b.ReservedDate == selectedDate)
                 .ToListAsync();
@@ -32,15 +31,18 @@ namespace DataAccessLayer.Repositories.Implementation
 
             TimeOnly startOfDay = TimeOnly.Parse("08:00:00");
             TimeOnly endOfDay = TimeOnly.Parse("16:30:00");
+
             for (TimeOnly y = startOfDay; y <= endOfDay; y = y.AddMinutes(30))
             {
                 bool isAvailable = !schedules.Any(s =>
-                    TimeOnly.FromDateTime(s.ReservedStartTime) <= y && y < TimeOnly.FromDateTime(s.ReservedEndTime));
+     s.ReservedStartTime <= y && y < s.ReservedEndTime);
 
                 availability[y] = isAvailable;
             }
+
             return availability;
         }
+
 
 
     }

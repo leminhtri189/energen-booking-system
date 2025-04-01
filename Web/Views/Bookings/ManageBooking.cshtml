@@ -1,0 +1,63 @@
+﻿@model IEnumerable<BusinessObject.Entities.Booking>
+
+@{
+    ViewData["Title"] = "Manage Booking";
+    Layout = "~/Views/Shared/_ManageAndDashBoardLayout.cshtml";
+}
+
+<h1>Quản lý Booking</h1>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Khách hàng</th>
+            <th>Booking ID</th>
+            <th>Check-in</th>
+            <th>Ghi chú</th>
+            <th>Check-out</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var booking in Model)
+        {
+            <tr id="row-@booking.Id">
+                <!-- Hiển thị tên khách hàng -->
+                <td>@booking.CustomerNavigation.FullName</td>
+
+                <!-- Booking ID -->
+                <td>@booking.Id</td>
+
+                <!-- Cột Check-in -->
+                <td>
+                    @if (booking.CheckinTime == null)
+                    {
+                        <input type="text" id="checkin-code-@booking.Id" placeholder="Nhập mã 6 số" class="form-control" />
+                        <button class="btn btn-success checkin-btn" onclick="checkin('@booking.Id')">Check-in</button>
+                    }
+                    else
+                    {
+                        <span class="badge bg-success">Đã Check-in</span>
+                    }
+                </td>
+
+                <!-- Cột Ghi chú -->
+                <td class="note-section" style="display: @(booking.CheckinTime != null ? "block" : "none")">
+                    <input type="text" id="note-@booking.Id" class="form-control note-input" placeholder="Nhập ghi chú" />
+                    <button class="btn btn-warning note-btn" onclick="saveNote('@booking.Id')">Lưu Note</button>
+                </td>
+
+                <!-- Cột Check-out -->
+                <td>
+                    @if (!string.IsNullOrEmpty(booking.Note))
+                    {
+                        <button class="btn btn-danger checkout-btn" onclick="checkout('@booking.Id')">Check-out</button>
+                    }
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+    <script src="~/lib/microsoft/signalr/dist/browser/signalr.js"></script>
+    <script src="~/js/bookingHub.js"></script>
+

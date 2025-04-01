@@ -1,0 +1,26 @@
+﻿@model IEnumerable<BusinessObject.Entities.Therapist>
+
+@{
+    bool firstItem = true;
+}
+@foreach (var page in Model.Chunk(4)) // Chia therapists thành nhóm 4 người
+{
+    <div class="carousel-item @(firstItem ? "active" : "")">
+        <div class="row">
+            @foreach (var therapist in page)
+            {
+                <div class="col-md-3">
+                    <div class="therapist-card">
+                        <img src="@therapist.UserNavigation.Avatar" class="img-fluid rounded-circle mb-2" width="80">
+                        <h5>@therapist.UserNavigation.FullName</h5>
+                        <p>Experience: @therapist.ExperienceYears</p>
+                        <p class="text-warning">★</p>
+                        <p>Bio: @therapist.Biography</p>
+                        <button class="btn btn-success" onclick="selectTherapist('@therapist.Id')">Select</button>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+    firstItem = false; // Đánh dấu các item tiếp theo không phải "active"
+}

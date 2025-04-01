@@ -19,6 +19,9 @@ namespace BusinessObject.Entities
         [Column("password", TypeName = "VARCHAR(250)")]
         public string Password { get; set; } = string.Empty;
 
+        [Column("avatar")]
+        public string? Avatar { get; set; }
+
         [Column("gender")]
         public Gender Gender { get; set; }
 

@@ -59,7 +59,7 @@
                         <p><strong>Giá:</strong> @string.Format("{0:N0}", service.Price) VND</p>
                         <div class="d-flex justify-content-between">
                             <a asp-controller="Services" asp-action="Details" asp-fragment="services-section" asp-route-id="@service.Id" class="btn btn-outline-primary btn-sm">Details</a>
-                            <a asp-controller="Bookings" asp-action="Index" asp-route-id="@service.Id" class="btn btn-primary btn-sm">Booking Now</a>
+                            <a asp-controller="Bookings" asp-action="Index" asp-fragment="services-section" asp-route-id="@service.Id" class="btn btn-primary btn-sm">Booking Now</a>
                         </div>
                     </div>
                 </div>

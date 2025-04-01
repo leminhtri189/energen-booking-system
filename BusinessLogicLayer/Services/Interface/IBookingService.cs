@@ -12,5 +12,6 @@ namespace BusinessLogicLayer.Services.Interface
     {
         Task<IDictionary<TimeOnly, bool>> GetTherapistSchedule(Guid therapistId, string date);
         Task<string> RequestPayment(Guid userId, Booking booking, string returnAction);
+        Task<IEnumerable<Booking>> GetBookingTracking(bool result,Guid? userId);
     }
 }
