@@ -20,24 +20,34 @@
         </div>
         <!-- Phần 3: Thông tin người dùng . chổ này ai làm xác thực và phân quyền thì lưu ý nhớ chỉ lại cho to hơn mọt ty và khi nào có user vào hệ thông như nhớ đổi tên và và ảnh đại diện và chỉnh lại reposive -->
         <div class="user-menu">
-            <ul class="navbar-nav">
-                <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-toggle="dropdown"
-                       aria-haspopup="true" aria-expanded="false">
-                        <span class="user-icon">
-                            <i class="fa-regular fa-user"> Guest</i>
-                        </span>
-                    </a>
-                    <div class="dropdown-menu dropdown-menu-right user-dropdown" aria-labelledby="userDropdown">
-                        <a class="dropdown-item btn-login" href="login.html">
-                            <i class="fas fa-sign-in-alt"></i> Login
+            @if (User.Claims.Count() == 0)
+            {
+                <ul class="navbar-nav">
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-toggle="dropdown"
+                           aria-haspopup="true" aria-expanded="false">
+                            <span class="user-icon">
+                                <i class="fa-regular fa-user"> Guest</i>
+                            </span>
                         </a>
-                        <a class="dropdown-item btn-register" href="register.html">
-                            <i class="fas fa-user-plus"></i> Register
-                        </a>
-                    </div>
-                </li>
-            </ul>
+                        <div class="dropdown-menu dropdown-menu-right user-dropdown" aria-labelledby="userDropdown">
+                            <a class="dropdown-item btn-login" href="/Account/Login">
+                                <i class="fas fa-sign-in-alt"></i> Login
+                            </a>
+                            <a class="dropdown-item btn-register" href="/Account/Register">
+                                <i class="fas fa-user-plus"></i> Register
+                            </a>
+                        </div>
+                    </li>
+                </ul>
+            }
+            else
+            {
+                <div class="btn-info">
+                    <a href="Account/Profile">@User.Claims.First(x => x.Type == "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name").Value</a>
+                </div>
+            }
+            
         </div>
 
 

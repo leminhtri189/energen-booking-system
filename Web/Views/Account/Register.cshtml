@@ -1,0 +1,115 @@
+﻿@model Web.Models.Account.AccountRegistrationViewModel
+@{
+    Layout = null;
+    ViewData["Title"] = "Register";
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign Up</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            background-color: #f0f4f8;
+        }
+        .signup-form {
+            background: #ffffff;
+            padding: 10px;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 450px;
+        }
+        .signup-form h2 {
+            margin-bottom: 20px;
+            color: #333;
+        }
+        .signup-form label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: #555;
+        }
+
+        .signup-form span {
+            color: red;
+        }
+
+        .signup-form input, .signup-form select {
+            width: 100%;
+            padding: 10px 0 10px 0;
+            margin-bottom: 15px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        .signup-form button {
+            width: 100%;
+            padding: 10px;
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        .signup-form button:hover {
+            background-color: #0056b3;
+        }
+        .signup-form a {
+            display: block;
+            text-align: left;
+            color: #007bff;
+            text-decoration: none;
+        }
+        .signup-form a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <form class="signup-form" method="post" action="/account/register" >
+        <a href="/Home">Back to Homepage</a>
+        <h2>Sign Up</h2>
+        <label for="email">Email</label>
+        <input type="email" name="email">
+        <span class="text-danger">@Html.ValidationMessageFor(x => x.Email)</span>
+
+        <label for="phone">Phone</label>
+        <input type="tel" name="phone">
+        <span class="text-danger">@Html.ValidationMessageFor(x => x.Phone)</span>
+
+        <label for="fullname">Full Name</label>
+        <input type="text" name="fullname">
+        <span class="text-danger">@Html.ValidationMessageFor(x => x.Fullname)</span>
+
+        <label for="password">Password</label>
+        <input type="password" name="password">
+        <span class="text-danger">@Html.ValidationMessageFor(x => x.Password)</span>
+
+        <label for="gender">Gender</label>
+        <span class="text-danger">@Html.ValidationMessageFor(x => x.Gender)</span>
+        <select name="gender">
+            <option value="" disabled selected>Select your gender</option>
+            <option value="male">Male</option>
+            <option value="female">Female</option>
+            <option value="other">Other</option>
+        </select>
+
+        <button type="submit">Sign Up</button>
+        <span style="color:black;">Already got an account ?<a href="./Login">Sign in</a></span>
+        
+        @if (TempData["ErrorMessage"] != null)
+        {
+            <div class="text-danger">@TempData["ErrorMessage"]</div>
+        }
+    </form>
+</body>
+</html>
