@@ -52,7 +52,8 @@ namespace Web.Controllers
         }
         public async Task<IActionResult> BookingService([FromForm] BookingServiceViewModel bookingViewModel)
         {
-            Guid userId = Guid.Parse("86DA4A86-3056-4E27-A352-F8F3187EBC41");
+            string user_id = HttpContext.User.Claims.FirstOrDefault(x => x.Type == "Id")!.Value;
+            Guid userId = Guid.Parse(user_id);
           var booking = _mapper.Map<Booking>(bookingViewModel);
             var returnAction = Url.Action("TransactionCallback", "Transaction", null, Request.Scheme);
             var requestPayment = await _bookingService.RequestPayment(userId, booking, returnAction);

@@ -1,4 +1,5 @@
-﻿<section class="ftco-section ftco-section-services bg-light">
+﻿@model Web.Models.Home.HomeViewModel
+<section class="ftco-section ftco-section-services bg-light">
     <div class="container-fluid px-md-5">
         <div class="row">
             <div class="col-md-6 col-lg-3">
@@ -8,7 +9,7 @@
                     </div>
                     <div class="text mt-3">
                         <h3>Aromatheraphy</h3>
-                        <p>A small river named Duden flows by their place and supplies it with the necessary regelialia. It is a paradisematic country</p>
+                        <p>Relax your mind and body with the soothing scents of essential oils, promoting deep relaxation and inner balance.</p>
                     </div>
                 </div>
             </div>
@@ -19,7 +20,7 @@
                     </div>
                     <div class="text mt-3">
                         <h3>Skin Care</h3>
-                        <p>A small river named Duden flows by their place and supplies it with the necessary regelialia. It is a paradisematic country</p>
+                        <p>Experience the healing touch of nature with herbal therapies that detoxify, soothe, and refresh your body.</p>
                     </div>
                 </div>
             </div>
@@ -30,7 +31,7 @@
                     </div>
                     <div class="text mt-3">
                         <h3>Herbal Spa</h3>
-                        <p>A small river named Duden flows by their place and supplies it with the necessary regelialia. It is a paradisematic country</p>
+                        <p>Relieve stress and tension with a rejuvenating massage designed to restore energy and well-being.</p>
                     </div>
                 </div>
             </div>
@@ -63,7 +64,7 @@
                         <div class="testimony-wrap p-4 pb-5">
                             <div class="text">
                                 <div class="line pl-5">
-                                    <p class="mb-4 pb-1">Far far away, behind the word mountains, far from the countries Vokalia and Consonantia, there live the blind texts.</p>
+                                    <p class="mb-4 pb-1">The experience was absolutely amazing! The service was top-notch, and I felt completely relaxed and rejuvenated. Highly recommend!</p>
                                     <span class="quote d-flex align-items-center justify-content-center">
                                         <i class="icon-quote-left"></i>
                                     </span>
@@ -83,7 +84,7 @@
                         <div class="testimony-wrap p-4 pb-5">
                             <div class="text">
                                 <div class="line pl-5">
-                                    <p class="mb-4 pb-1">Far far away, behind the word mountains, far from the countries Vokalia and Consonantia, there live the blind texts.</p>
+                                    <p class="mb-4 pb-1">A truly refreshing and calming atmosphere. The staff was professional, and the treatments were beyond my expectations. Will definitely come back!</p>
                                     <span class="quote d-flex align-items-center justify-content-center">
                                         <i class="icon-quote-left"></i>
                                     </span>
@@ -104,7 +105,7 @@
                         <div class="testimony-wrap p-4 pb-5">
                             <div class="text">
                                 <div class="line pl-5">
-                                    <p class="mb-4 pb-1">Far far away, behind the word mountains, far from the countries Vokalia and Consonantia, there live the blind texts.</p>
+                                    <p class="mb-4 pb-1">This was exactly what I needed! The ambiance, the service, and the attention to detail made it a perfect spa experience</p>
                                     <span class="quote d-flex align-items-center justify-content-center">
                                         <i class="icon-quote-left"></i>
                                     </span>
@@ -125,7 +126,7 @@
                         <div class="testimony-wrap p-4 pb-5">
                             <div class="text">
                                 <div class="line pl-5">
-                                    <p class="mb-4 pb-1">Far far away, behind the word mountains, far from the countries Vokalia and Consonantia, there live the blind texts.</p>
+                                    <p class="mb-4 pb-1">From start to finish, everything was fantastic. I felt so pampered and refreshed. Can’t wait for my next visit!</p>
                                     <span class="quote d-flex align-items-center justify-content-center">
                                         <i class="icon-quote-left"></i>
                                     </span>
@@ -146,7 +147,7 @@
                         <div class="testimony-wrap p-4 pb-5">
                             <div class="text">
                                 <div class="line pl-5">
-                                    <p class="mb-4 pb-1">Far far away, behind the word mountains, far from the countries Vokalia and Consonantia, there live the blind texts.</p>
+                                    <p class="mb-4 pb-1">Such a relaxing experience! The team was incredibly welcoming, and the treatments left me feeling completely recharged.</p>
                                     <span class="quote d-flex align-items-center justify-content-center">
                                         <i class="icon-quote-left"></i>
                                     </span>
@@ -179,7 +180,7 @@
                     <div class="col-md-6 col-lg-3 d-flex justify-content-center counter-wrap ftco-animate">
                         <div class="block-18 text-center">
                             <div class="text">
-                                <strong class="number" data-number="2560">0</strong>
+                                <strong class="number" data-number="@Model.UserCount">0</strong>
                                 <span>Happy Customers</span>
                             </div>
                         </div>
@@ -187,8 +188,8 @@
                     <div class="col-md-6 col-lg-3 d-flex justify-content-center counter-wrap ftco-animate">
                         <div class="block-18 text-center">
                             <div class="text">
-                                <strong class="number" data-number="60">0</strong>
-                                <span>Treatments</span>
+                                <strong class="number" data-number="@Model.ServiceCount">0</strong>
+                                <span>Services</span>
                             </div>
                         </div>
                     </div>
@@ -203,8 +204,8 @@
                     <div class="col-md-6 col-lg-3 d-flex justify-content-center counter-wrap ftco-animate">
                         <div class="block-18 text-center">
                             <div class="text">
-                                <strong class="number" data-number="100">0</strong>
-                                <span>Lesson Conducted</span>
+                                <strong class="number" data-number="@Model.TherapistCount">0</strong>
+                                <span>Skin Therapist</span>
                             </div>
                         </div>
                     </div>

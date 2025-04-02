@@ -1,27 +1,40 @@
 ﻿using BusinessLogicLayer.Services.Interface;
 using BusinessObject.Entities;
+using BusinessObject.Enums;
 using DataAccessLayer.Repositories.Interface;
+using DataAccessLayer.UoW;
+using Microsoft.EntityFrameworkCore.Metadata;
 using System;
 namespace BusinessLogicLayer.Services.Implementation
 {
     public class DashboardService : IDashboardService
     {
+        private IUnitOfWork _unitOfWork;
         private IDashboardRepository dashboardRepository;
 
-        public DashboardService(IDashboardRepository dashboardRepository)
+        public DashboardService(IDashboardRepository dashboardRepository, IUnitOfWork unitOfWork)
         {
             this.dashboardRepository = dashboardRepository;
+            _unitOfWork = unitOfWork;
         }
 
         // Tổng số lượng
-        public async Task<int> GetUserCountAsync()
+        public async Task<int> GetCustomerCountAsync()
         {
-            return await dashboardRepository.GetUserCountAsync();
+            var listUser = await _unitOfWork.Users.GetAllAsync(us => us.Role == Role.Custommer);
+            return listUser.Count();
+        }
+
+        public async Task<int> GetTherapistCountAsync()
+        {
+            var listUser = await _unitOfWork.Users.GetAllAsync(us => us.Role == Role.Therapist);
+            return listUser.Count();
         }
 
         public async Task<int> GetServiceCountAsync()
         {
-            return await dashboardRepository.GetServiceCountAsync();
+            var listService = await _unitOfWork.Services.GetAllAsync(se => se.Status == ServiceStatus.Available);
+            return listService.Count();
         }
 
         public async Task<int> GetBlogCountAsync()

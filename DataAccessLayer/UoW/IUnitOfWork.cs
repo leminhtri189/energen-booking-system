@@ -8,6 +8,8 @@ namespace DataAccessLayer.UoW
     {
         IBookingRepository Bookings { get; }
         IQuestionRepository Questions { get; }
+        IUserRepository Users { get; }
+        IServiceRepository Services { get; }
         ITransactionRepo Transactions{ get; }
         IGenericRepository<TEntity> GenericRepository<TEntity>()
            where TEntity : BaseEntity;

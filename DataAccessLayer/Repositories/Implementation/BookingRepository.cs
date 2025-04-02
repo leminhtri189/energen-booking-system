@@ -24,7 +24,6 @@ namespace DataAccessLayer.Repositories.Implementation
                 throw new ArgumentException("Invalid date format", nameof(date));
             }
 
-            DateOnly selectedDateOnly = DateOnly.FromDateTime(selectedDate);
 
             var schedules = await ((ApplicationDbContext)context).Bookings
                 .Where(b => b.TherapistId == therapistId && b.ReservedDate == selectedDate)

@@ -10,7 +10,8 @@ namespace BusinessLogicLayer.Services.Interface
     public interface IDashboardService
     {
         // Lấy tổng số lượng
-        Task<int> GetUserCountAsync();
+        Task<int> GetCustomerCountAsync();
+        Task<int> GetTherapistCountAsync();
         Task<int> GetServiceCountAsync();
         Task<int> GetBlogCountAsync();
         Task<int> GetTransactionCountAsync();

@@ -4,8 +4,8 @@
     {
         Admin,
         Manager,
-        Therapist,
         Staff,
+        Therapist,
         Custommer,
     }
 }

@@ -15,7 +15,7 @@ namespace BusinessObject.Entities
         [ForeignKey(nameof(Question)),Column("question_id")]
         public Guid QuestionId { get; set; }
 
-        public virtual Question QuestionNavigation { get; set; } = null!;
+        public virtual QuestionOption QuestionNavigation { get; set; } = null!;
 
         public virtual ICollection<SkinType> SkinTypeNavigation { get; set; } = null!;
         

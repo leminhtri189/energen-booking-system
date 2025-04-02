@@ -16,13 +16,19 @@ namespace DataAccessLayer.UoW
 
         public ITransactionRepo Transactions { get; private set; }
 
+        public IUserRepository Users { get; private set; }
+
+        public IServiceRepository Services { get; private set; }
+
         private Hashtable? _repositories;
 
         public UnitOfWork(ApplicationDbContext context)
         {
 
             _context = context;
+            Services = new ServiceRepository(context);
             Bookings = new BookingRepository(context);
+            Users = new UserRepository(context);
             Questions = new QuestionRepository(context);
             Transactions = new TransactionRepo(context);
         }
