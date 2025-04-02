@@ -11,6 +11,9 @@ using DataAccessLayer.Repositories.Interface;
 using AutoMapper;
 using BusinessLogicLayer.Services.Interface;
 using Web.Models;
+using Microsoft.AspNetCore.Authorization;
+using BusinessObject.Enums;
+using DataAccessLayer.Commons;
 
 namespace Web.Controllers
 {
@@ -46,6 +49,16 @@ namespace Web.Controllers
 
             return View(viewModel);
         }
+
+        [Authorize]
+        public async Task<IActionResult> History(int page = 1, BookingStatus status = BookingStatus.NotStarted)
+        {
+            string user_id = HttpContext.User.Claims.FirstOrDefault(x => x.Type == "Id")!.Value;
+            ViewData["booking_pagination"] = await _bookingService.GetCustomerBookingWithStatus(Guid.Parse(user_id), page, 5, status);
+            ViewData["booking_status_selection"] = status;
+            return View();
+        }
+
         public async Task<IActionResult> BookingService([FromBody] BookingServiceViewModel bookingViewModel)
         {
             Guid userId = Guid.Parse("86DA4A86-3056-4E27-A352-F8F3187EBC41");

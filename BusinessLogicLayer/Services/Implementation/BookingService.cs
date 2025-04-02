@@ -1,6 +1,8 @@
 ﻿using BusinessLogicLayer.Commons;
 using BusinessLogicLayer.Services.Interface;
 using BusinessObject.Entities;
+using BusinessObject.Enums;
+using DataAccessLayer.Commons;
 using DataAccessLayer.UoW;
 using Google.Api.Gax;
 using Microsoft.AspNetCore.WebUtilities;
@@ -22,6 +24,15 @@ namespace BusinessLogicLayer.Services.Implementation
             _payPal = payPal;
             _unitOfWork = unitOfWork;
         }
+
+        public async Task<PaginationResult<Booking>> GetCustomerBookingWithStatus(Guid customer_id, int page, int page_size, BookingStatus status)
+        {
+            return await _unitOfWork.Bookings.GetCustomerBookingWithStatusPaginated(
+                customer_id, page, page_size, status,
+                booking => booking.OrderByDescending(x => x.ReservedDate).ThenByDescending(x => x.ReservedStartTime));
+;
+        }
+
         public async Task<IDictionary<TimeOnly, bool>> GetTherapistSchedule(Guid therapistId, string date)=> await _unitOfWork.Bookings.GetTherapistSchedule(therapistId,date);
 
         public async Task<string> RequestPayment(Guid userId, Booking booking, string returnAction)

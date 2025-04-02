@@ -24,6 +24,7 @@ namespace BusinessLogicLayer
             services.AddScoped<ITransactionService, TransactionService>();
             services.AddScoped<ICategotiryService, CategoryService>();
             services.AddScoped<ISkinTypeService, SkinTypeService>();
+            services.AddScoped<IFeedbackService, FeedbackService>();
             services.Configure<PayPal>(options => configuration.GetSection("PayPal").Bind(options));
             services.AddSingleton(resolver => resolver.GetRequiredService<IOptions<PayPal>>().Value);
             return services;
