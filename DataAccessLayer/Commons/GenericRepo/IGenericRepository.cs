@@ -17,6 +17,8 @@ namespace DataAccessLayer.Commons.GenericRepo
 
         Task<T?> GetByIdAsync(Guid id);
 
+        Task<T?> GetByIdAsync(Guid id, Func<IQueryable<T>, IIncludableQueryable<T, object>> includes);
+
         Task<IEnumerable<T>> GetAllAsync();
 
         Task<IEnumerable<T>> GetAllAsync(params Expression<Func<T, object>>[] includes);

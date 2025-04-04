@@ -21,6 +21,7 @@ namespace BusinessLogicLayer
             services.AddScoped<IQuestionService, QuestionService>();
             services.AddScoped<ITherapistService, TherapistService>();
             services.AddScoped<IBookingService, BookingService>();
+            services.AddScoped<IBlogService, BlogService>();
             services.AddScoped<ITransactionService, TransactionService>();
             services.AddScoped<ICategotiryService, CategoryService>();
             services.AddScoped<ISkinTypeService, SkinTypeService>();

@@ -7,39 +7,42 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using BusinessObject.Entities;
 using DataAccessLayer.Context;
+using BusinessLogicLayer.Services.Interface;
 
 namespace Web.Controllers
 {
     public class BlogsController : Controller
     {
-        private readonly ApplicationDbContext _context;
+        private readonly IBlogService _service;
 
-        public BlogsController(ApplicationDbContext context)
+        public BlogsController(IBlogService blogService)
         {
-            _context = context;
+            _service = blogService;
         }
 
         // GET: Blogs
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(int page = 1)
         {
-            return View(await _context.Blogs.ToListAsync());
+            return View(await _service.GetBlogPaginated(page, 6));
         }
 
         // GET: Blogs/Details/5
         public async Task<IActionResult> Details(Guid? id)
         {
+            Console.WriteLine(id);
+
             if (id == null)
             {
                 return NotFound();
             }
 
-            var blog = await _context.Blogs
-                .FirstOrDefaultAsync(m => m.Id == id);
+            Blog? blog = await _service.GetBlogWithId((Guid) id);
+
             if (blog == null)
             {
                 return NotFound();
             }
-
+            ViewData["other_blogs"] = await _service.GetBlogPaginated(1, 3);
             return View(blog);
         }
 
@@ -59,8 +62,6 @@ namespace Web.Controllers
             if (ModelState.IsValid)
             {
                 blog.Id = Guid.NewGuid();
-                _context.Add(blog);
-                await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
             return View(blog);
@@ -74,12 +75,7 @@ namespace Web.Controllers
                 return NotFound();
             }
 
-            var blog = await _context.Blogs.FindAsync(id);
-            if (blog == null)
-            {
-                return NotFound();
-            }
-            return View(blog);
+            return View();
         }
 
         // POST: Blogs/Edit/5
@@ -96,22 +92,6 @@ namespace Web.Controllers
 
             if (ModelState.IsValid)
             {
-                try
-                {
-                    _context.Update(blog);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!BlogExists(blog.Id))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
                 return RedirectToAction(nameof(Index));
             }
             return View(blog);
@@ -125,14 +105,7 @@ namespace Web.Controllers
                 return NotFound();
             }
 
-            var blog = await _context.Blogs
-                .FirstOrDefaultAsync(m => m.Id == id);
-            if (blog == null)
-            {
-                return NotFound();
-            }
-
-            return View(blog);
+            return View();
         }
 
         // POST: Blogs/Delete/5
@@ -140,19 +113,7 @@ namespace Web.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(Guid id)
         {
-            var blog = await _context.Blogs.FindAsync(id);
-            if (blog != null)
-            {
-                _context.Blogs.Remove(blog);
-            }
-
-            await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
-        }
-
-        private bool BlogExists(Guid id)
-        {
-            return _context.Blogs.Any(e => e.Id == id);
         }
     }
 }
