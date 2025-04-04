@@ -11,8 +11,12 @@ using DataAccessLayer.Repositories.Interface;
 using AutoMapper;
 using BusinessLogicLayer.Services.Interface;
 using Web.Models;
+using Microsoft.AspNetCore.Authorization;
+using BusinessObject.Enums;
+using DataAccessLayer.Commons;
 using Microsoft.AspNetCore.SignalR;
 using Web.Hubs;
+using System.Security.Claims;
 
 namespace Web.Controllers
 {
@@ -21,6 +25,7 @@ namespace Web.Controllers
         private readonly ISkinTimeService _skinTimeService;
         private readonly ITherapistService _therapistService;
         private readonly IBookingService _bookingService;
+        private Guid? _serviceId;
         private readonly IHubContext<BookingHub> _hubContext;
         private readonly IMapper _mapper;
         public string? SearchQuery { get; set; }
@@ -36,22 +41,38 @@ namespace Web.Controllers
         }
 
         // GET: Bookings
-        public async Task<IActionResult> Index(Guid id, string? searchKey, int? page)
+        public IActionResult Index(Guid id, string? searchKey, int? page)
+        {
+
+
+                var service = _skinTimeService.GetService(id); 
+                return View(service);
+
+        }
+
+        [Authorize]
+        public async Task<IActionResult> History(int page = 1, BookingStatus status = BookingStatus.NotStarted)
+        {
+            string user_id = HttpContext.User.Claims.FirstOrDefault(x => x.Type == "Id")!.Value;
+            ViewData["booking_pagination"] = await _bookingService.GetCustomerBookingWithStatus(Guid.Parse(user_id), page, 5, status);
+            ViewData["booking_status_selection"] = status;
+            return View();
+        }
+        public async Task<IActionResult> GetTherapistsToBooking(int? page)
         {
             int pageNumber = page ?? 1;
+            var therapists = await _therapistService.GetTherapistsToBooking(pageNumber, 4);
 
-            var service = await _skinTimeService.GetService(id);
-            var listTherapist = await _therapistService.GetTherapists(SearchQuery, pageNumber, PageSize);
-            var viewModel = new BookingViewModel
-            {
-                Service = service,
-                Therapists = listTherapist // Truyền danh sách chuyên viên trực tiếp
-            };
-
-            return View(viewModel);
+            return PartialView("_TherapistPartial", therapists);
         }
+
+        [Authorize]
         public async Task<IActionResult> BookingService([FromForm] BookingServiceViewModel bookingViewModel)
         {
+            if (!User.Identity.IsAuthenticated) // Kiểm tra nếu chưa đăng nhập
+            {
+                return RedirectToAction("Login", "Account", new { returnUrl = Request.Path });
+            }
             string user_id = HttpContext.User.Claims.FirstOrDefault(x => x.Type == "Id")!.Value;
             Guid userId = Guid.Parse(user_id);
           var booking = _mapper.Map<Booking>(bookingViewModel);
@@ -65,72 +86,47 @@ namespace Web.Controllers
             var timeSlots = _bookingService.GetTherapistSchedule(therapistid, date);
             return Json(new { success = true, data = timeSlots });
         }
-        public async Task<IActionResult> GetTherapists(int page = 1, int pageSize = 4, string? searchKey = null)
+
+        [Authorize(Roles = "2, 3")]
+        public async Task<IActionResult> ManageBooking(DateOnly? targetDate,bool? updated)
         {
-            var therapists = await _therapistService.GetTherapists(searchKey, page, pageSize);
-
-            if (therapists == null || !therapists.Any())
-            {
-                return Content("");
-            }
-
-            return PartialView("_TherapistPartial", therapists);
-        }
-
-        public async Task<IActionResult> BookingTracking()
-        {
-            int role = 1;// staff
-            bool result;
-            if (role ==1)
-            {
-                result = true;
-            }
-            var userId = Guid.Parse("CF57BFEE-0396-4FF4-8791-AD998D1125C0");
-            var listBooking = await _bookingService.GetBookingTracking(true,userId);
+            string user_id = HttpContext.User.Claims.FirstOrDefault(x => x.Type == "Id")!.Value;
+            string role = HttpContext.User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.Role)!.Value;
+            var listBooking = await _bookingService.GetBookingTracking(role, user_id,targetDate);
             return View("ManageBooking", listBooking);
         }
-        public async Task<IActionResult> Checkin(Guid bookingId, string checkinCode)
+        [Authorize(Roles = "2")]
+        public async Task<IActionResult> Checkin(Guid bookingId)
         {
-            //var booking = await _bookingService.GetBookingById(bookingId);
-            //if (booking == null) return BadRequest("Booking không tồn tại!");
+            await _bookingService.CheckIn(bookingId);
 
-            //string generatedCode = booking.BookingId.ToString("N").Substring(0, 6).ToUpper();
-            //if (generatedCode != checkinCode.ToUpper())
-            //    return BadRequest("Mã check-in không đúng!");
+            // Gửi tín hiệu SignalR cho các client khác
+            await _hubContext.Clients.All.SendAsync("ReceiveBookingUpdate");
 
-            //booking.CheckinTime = DateTime.Now;
-            //await _bookingService.UpdateBooking(booking);
-
-            //// Gửi tín hiệu cập nhật đến tất cả client
-            //await _hubContext.Clients.All.SendAsync("ReceiveBookingUpdate", booking.BookingId);
-            return Ok();
+            // Chuyển hướng tới trang ManageBooking và thêm tham số 'updated=true' để reload trang
+            return RedirectToAction("ManageBooking", "Bookings", new { updated = "true" });
         }
+
+        [Authorize(Roles = "3")]
         public async Task<IActionResult> SaveNote(Guid bookingId, string note)
         {
-            //var booking = await _bookingService.GetBookingById(bookingId);
-            //if (booking == null) return BadRequest("Booking không tồn tại!");
+            await _bookingService.Note(bookingId, note);
 
-            //booking.Note = note;
-            //await _bookingService.UpdateBooking(booking);
+            await _hubContext.Clients.All.SendAsync("ReceiveBookingUpdate");
 
-            //// Gửi tín hiệu cập nhật đến tất cả client
-            //await _hubContext.Clients.All.SendAsync("ReceiveBookingUpdate", booking.BookingId);
-            return Ok();
+            return RedirectToAction("ManageBooking", "Bookings", new { updated = "true" });
         }
+
+        [Authorize(Roles = "2")]
         public async Task<IActionResult> Checkout(Guid bookingId)
         {
-            //var booking = await _bookingService.GetBookingById(bookingId);
-            //if (booking == null) return BadRequest("Booking không tồn tại!");
+            await _bookingService.CheckOut(bookingId);
 
-            //if (string.IsNullOrEmpty(booking.Note))
-            //    return BadRequest("Vui lòng nhập ghi chú trước khi check-out!");
+            // Chỉ cần gửi tín hiệu SignalR mà không cần thêm tham số 'updated=true' trong URL
+            await _hubContext.Clients.All.SendAsync("ReceiveBookingUpdate");
 
-            //booking.CheckoutTime = DateTime.Now;
-            //await _bookingService.UpdateBooking(booking);
-
-            //// Gửi tín hiệu cập nhật đến tất cả client
-            //await _hubContext.Clients.All.SendAsync("ReceiveBookingUpdate", booking.BookingId);
-            return Ok();
+            return RedirectToAction("ManageBooking", "Bookings", new { updated = "true" });
         }
+
     }
 }

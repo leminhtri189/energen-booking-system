@@ -27,9 +27,17 @@ namespace Web.Controllers
             var sussess = await _service.CallbackPayment(key, data);
             if (sussess)
             {
-                return View("PaymentSusscess");
+                return View("PaymentSuccess");
             }
             return View("PaymentFailed");
+        }
+        public IActionResult PaymentSuccess()
+        {
+            return View();
+        }
+        public IActionResult PaymentFailed()
+        {
+            return View();
         }
     }
 }

@@ -13,6 +13,7 @@ namespace DataAccessLayer.Commons
         public int PageSize { get; set; }
         public int TotalPage { get; set; }
         public int CurrentPage { get; set; }
+        public int Totaltem {  get; set; }
     }
 
     public class PaginationResult<T>: PaginationResult

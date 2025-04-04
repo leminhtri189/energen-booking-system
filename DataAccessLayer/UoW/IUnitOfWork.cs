@@ -7,6 +7,7 @@ namespace DataAccessLayer.UoW
     public interface IUnitOfWork : IDisposable
     {
         IBookingRepository Bookings { get; }
+        ITherapistRepository Therapists { get; }
         IQuestionRepository Questions { get; }
         IUserRepository Users { get; }
         IServiceRepository Services { get; }

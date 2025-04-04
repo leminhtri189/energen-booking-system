@@ -1,0 +1,119 @@
+﻿@using BusinessObject.Entities
+@using BusinessObject.Enums
+@using DataAccessLayer.Commons
+@{
+    Layout = null;
+    ViewData["Title"] = "History";
+}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Profile</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        .sidebar {
+            height: 100vh;
+            background-color: #f8f9fa;
+            padding-top: 20px;
+        }
+        .sidebar .nav-link.active {
+            font-weight: bold;
+            color: #007bff;
+        }
+        .form-container {
+            padding: 20px;
+        }
+    </style>
+</head>
+<body>
+    <header class="d-flex justify-content-between align-items-center px-3 py-2 bg-light border-bottom">
+        <div class="logo">
+            <h4>Your Logo</h4>
+        </div>
+        <nav>
+            <ul class="nav">
+                <li class="nav-item"><a class="nav-link" href="/">Home</a></li>
+                <li class="nav-item"><a class="nav-link" href="/Service">Services</a></li>
+                <li class="nav-item"><a class="nav-link" href="/Blog">Blog</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <div class="container-fluid">
+        <div class="row">
+            <!-- Sidebar -->
+            <nav class="col-md-2 sidebar">
+                <ul class="nav flex-column">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/Account/Profile">My Profile</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="/Bookings/History">Schedules</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/Transaction/History">Payment History</a>
+                    </li>
+                </ul>
+            </nav>
+
+            <!-- Main content -->
+            <div class="col-md-10">
+                <ul class="nav nav-tabs">
+                    @foreach(var item in Enum.GetValues(typeof(BookingStatus)))
+                    {
+                        <li class="nav-item">
+                            <a class="nav-link @(ViewData["booking_status_selection"].ToString() == item.ToString() ? "active" : "")" href="/Bookings/History?page=1&status=@item.ToString()">@item.ToString()</a>
+                        </li>
+                    }
+                </ul>
+                <div class="d-flex flex-wrap">
+                    @foreach (var item in (ViewData["booking_pagination"] as PaginationResult<Booking>)!.PageContent)
+                    {
+                    <div class="card p-2" style="width: 30rem;">
+                        <img src="@item.ServiceNavigation.Thumbnail" class="card-img" style="height: 10rem;object-fit:none" alt="lmao">
+                        <div class="card-body">
+                            <h5 class="card-title"><b>@item.ServiceNavigation.ServiceName</b></h5>
+                            <h6 class="card-subtitle mb-2 text-body-secondary"><b>Check-In Code: </b><span class="check-in-code" data-id="@item.Id"></span></h6>
+                            <h6 class="card-subtitle mb-2 text-body-secondary"><b>Therapist: </b> @item.TherapistNavigation.UserNavigation.FullName</h6>
+                            <h6 class="card-subtitle mb-3 text-body-primary"><b>Appointment Time: </b>@item.ReservedDate @item.ReservedStartTime</h6>
+                            @if (item.Status == BookingStatus.Finished)
+                            {
+                                <a href="/Feedback/Create?id=@item.Id" class="btn btn-primary">Leave a feedback</a>
+                            }
+                        </div>
+                    </div>
+                    }
+                </div>
+                <div class="pagination">
+                    <ul class="pagination">
+                        @for(int i = 1; i < (ViewData["booking_pagination"] as PaginationResult)!.TotalPage; i++)
+                        {
+                            <li class="page-item"><a class="page-link @((ViewData["booking_pagination"] as PaginationResult)!.CurrentPage == i ? "active" : "")" href="/Bookings/History?page=@i&status=@ViewData["booking_status_selection"]">@i</a></li>
+                        }
+                    </ul>
+                </div>
+            </div>
+            <script>
+                document.addEventListener("DOMContentLoaded", function() {
+                    const checkInCodeElements = document.querySelectorAll('.check-in-code');
+
+                    checkInCodeElements.forEach(function(element) {
+                        const bookingId = element.getAttribute('data-id'); 
+
+                        if (bookingId) {
+                            // Cắt Guid thành chuỗi chỉ chứa các ký tự số
+                            const numericId = bookingId.replace(/[^0-9]/g, ''); 
+
+                            // Lấy 6 chữ số đầu tiên từ chuỗi số
+                            const checkInCode = numericId.substring(0, 6);
+
+                            // Hiển thị CheckInCode (đảm bảo có 6 chữ số)
+                            element.textContent = checkInCode.padStart(6, '0'); // Đảm bảo có đủ 6 chữ số
+                        }
+                    });
+                });
+            </script>
+</body>
+</html>

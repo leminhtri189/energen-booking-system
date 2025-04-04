@@ -1,4 +1,6 @@
-﻿@model IEnumerable<Web.Models.ServicesViewModel>
+﻿@using DataAccessLayer.Commons
+@using System.Security.Claims
+@model PaginationResult<BusinessObject.Entities.Service>
 
 @{
     Layout = "~/Views/Shared/_HomeLayout.cshtml";
@@ -6,15 +8,21 @@
 
 <div class="container mt-5">
     <h2 class="text-center mb-4">Our Service</h2>
-    <form method="get" asp-controller="Services" asp-action="Index" asp-fragment="services-section" class="mb-4">
-        <div class="row">
-            <div class="col-md-4">
-                <input type="text" name="searchKey" class="form-control" placeholder="Enter Service Name..." value="@Context.Request.Query["searchKey"]">
+    <form method="get" asp-controller="Services" asp-action="Index" asp-fragment="services-section"
+          style="margin-bottom: 1.5rem; padding: 1rem; border-radius: 5px; background: #f8f9fa; box-shadow: 0 3px 5px rgba(0, 0, 0, 0.1);">
+
+        <div class="d-flex justify-content-between align-items-center">
+            <!-- Thanh tìm kiếm (bên trái) -->
+            <div style="flex: 0.75; margin-right: 15px;">
+                <input type="text" name="searchKey" class="form-control" placeholder="Search services..."
+                       style="padding: 8px 12px; border: 1px solid #ccc;" value="@Context.Request.Query["searchKey"]">
             </div>
 
-            <!-- Dropdown Category -->
-            <div class="col-md-3">
-                <select name="categoryId" class="form-control">
+            <!-- Dropdowns (bên phải) -->
+            <div class="d-flex" style="gap: 10px;">
+                <!-- Dropdown Category -->
+                <select name="categoryId" class="form-select" onchange="this.form.submit()"
+                        style="padding: 8px 12px; border: 1px solid #ccc;">
                     <option value="">-- Select Category --</option>
                     @foreach (var category in ViewBag.Categories)
                     {
@@ -23,11 +31,10 @@
                         </option>
                     }
                 </select>
-            </div>
 
-            <!-- Dropdown Skin Type -->
-            <div class="col-md-3">
-                <select name="skinTypeId" class="form-control">
+                <!-- Dropdown Skin Type -->
+                <select name="skinTypeId" class="form-select" onchange="this.form.submit()"
+                        style="padding: 8px 12px; border: 1px solid #ccc;">
                     <option value="">-- Select Skin Type --</option>
                     @foreach (var skinType in ViewBag.SkinTypes)
                     {
@@ -37,30 +44,56 @@
                     }
                 </select>
             </div>
-
-            <!-- Nút tìm kiếm -->
-            <div class="col-md-2">
-                <button type="submit" class="btn btn-primary w-100">Search</button>
-            </div>
         </div>
     </form>
-
     <div class="row row-cols-1 row-cols-md-4 g-4">
-        @foreach (var service in Model)
+        @foreach (var service in Model.PageContent)
         {
             <div class="col-md-3">
-                <!-- Cột chiếm 1/4 chiều rộng trên màn hình lớn -->
                 <div class="card shadow-sm border-0 rounded-lg">
                     <img src="@service.Thumbnail" class="card-img-top" alt="@service.ServiceName">
                     <div class="card-body">
-                        <h5 class="card-title">@service.ServiceName</h5>
-                        <p class="card-text text-muted">@service.Description</p>
-                        <p><strong>Thời gian:</strong> @service.Duration phút</p>
-                        <p><strong>Giá:</strong> @string.Format("{0:N0}", service.Price) VND</p>
+                        <h5 class="card-title" title="@service.ServiceName"
+                            style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                            @service.ServiceName
+                        </h5>
+
+                        <p class="card-text text-muted" title="@service.Description"
+                           style="display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;
+           overflow: hidden; text-overflow: ellipsis;
+           line-height: 1.5em; max-height: 3em; padding-bottom: 2px;">
+                            @service.Description
+                        </p>
+
+                        <p>
+                            <strong>Duration:</strong> @service.Duration minute
+                        </p>
+                        <p><strong>Price:</strong> $@string.Format("{0:N0}", service.Price)</p>
                         <div class="d-flex justify-content-between">
-                            <a asp-controller="Services" asp-action="Details" asp-fragment="services-section" asp-route-id="@service.Id" class="btn btn-outline-primary btn-sm">Details</a>
-                            <a asp-controller="Bookings" asp-action="Index" asp-fragment="services-section" asp-route-id="@service.Id" class="btn btn-primary btn-sm">Booking Now</a>
+                            <a asp-controller="Services" asp-action="Details" asp-fragment="services-section" asp-route-id="@service.Id"
+                               class="btn btn-outline-primary btn-sm px-2 py-2">Details</a>
+
+                            @if (User.Identity.IsAuthenticated)
+                            {
+                                var userRole = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Role)?.Value;
+
+                                if (userRole == "4") // Thay "Customer" bằng role phù hợp trong hệ thống của bạn
+                                {
+                                    <a asp-controller="Bookings" asp-action="Index" asp-fragment="services-section" asp-route-id="@service.Id"
+                                       class="btn btn-primary btn-sm px-2 py-2">Book Now!</a>
+                                }
+
+                            }
+                            else
+                            {
+                                <a asp-controller="Account" asp-action="Login"
+                                   asp-route-returnUrl="@Url.Action("Index", "Bookings", new { id = service.Id })#services-section"
+                                   class="btn btn-primary btn-sm px-2 py-2">
+                                    Book via Login
+                                </a>
+                            }
                         </div>
+
                     </div>
                 </div>
             </div>
@@ -70,32 +103,35 @@
     <!-- Phân trang -->
     <nav>
         <ul class="pagination justify-content-center mt-4">
-            @if (ViewBag.CurrentPage > 1)
+            @if (Model.CurrentPage > 1)
             {
                 <li class="page-item">
-                    <a class="page-link" asp-controller="Services" asp-action="Index" asp-route-page="@(ViewBag.CurrentPage - 1)" asp-fragment="services-section">Pre</a>
+                    <a class="page-link" asp-controller="Services" asp-action="Index" asp-route-page="@(Model.CurrentPage - 1)" asp-fragment="services-section">Pre</a>
                 </li>
             }
 
-            @for (int i = 1; i <= ViewBag.TotalPages; i++)
+            @for (int i = 1; i <= Model.TotalPage; i++)
             {
-                <li class="page-item @(i == ViewBag.CurrentPage ? "active" : "")">
+                <li class="page-item @(i == Model.CurrentPage ? "active" : "")">
                     <a class="page-link" asp-controller="Services" asp-action="Index" asp-route-page="@i" asp-fragment="services-section">@i</a>
                 </li>
             }
 
-            @if (ViewBag.CurrentPage < ViewBag.TotalPages)
+            @if (Model.CurrentPage < Model.TotalPage)
             {
                 <li class="page-item">
-                    <a class="page-link" asp-controller="Services" asp-action="Index" asp-route-page="@(ViewBag.CurrentPage + 1)" asp-fragment="services-section">Next</a>
+                    <a class="page-link" asp-controller="Services" asp-action="Index" asp-route-page="@(Model.CurrentPage + 1)" asp-fragment="services-section">Next</a>
                 </li>
             }
         </ul>
     </nav>
+
 </div>
 
 <style>
     .card {
+        margin-bottom: 20px;
+        background-color: #f5f5f5;
         border-radius: 15px; /* Bo tròn các góc của card */
         transition: transform 0.3s ease-in-out; /* Hiệu ứng zoom khi hover */
         overflow: hidden;

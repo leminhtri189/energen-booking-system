@@ -6,6 +6,7 @@ using DataAccessLayer.UoW;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Shared.File;
 
 namespace DataAccessLayer
 {
@@ -21,7 +22,7 @@ namespace DataAccessLayer
             services.AddScoped<IServiceRepository, ServiceRepository>();
             services.AddScoped<IQuestionRepository, QuestionRepository>();
             services.AddScoped<ITherapistRepository, TherapistRepository>();
-            services.AddScoped<IDashboardRepository, DashboardRepository>();
+            services.AddSingleton<FirebaseStorage>();
 
             return services;
         }

@@ -4,91 +4,97 @@
 
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login Page</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-            background: linear-gradient(135deg, #f5f5f5, #fcedd2);
-            height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-        .login-container {
-            background-color: white;
-            padding: 30px 40px;
-            border-radius: 8px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            width: 300px;
-        }
-        .login-container h1 {
-            text-align: center;
-            color: #2d3436;
-            margin-bottom: 20px;
-        }
-        .login-container input[type="text"],
-        .login-container input[type="password"] {
-            width: 100%;
-            padding: 10px;
-            margin: 10px 0;
-            border: 1px solid #dfe6e9;
-            border-radius: 4px;
-            box-sizing: border-box;
-        }
-        .login-container button {
-            width: 100%;
-            padding: 10px;
-            background-color: #d9bf77;
-            border: 1px solid #d9bf77;
-            border-radius: 4px;
-            color: white;
-            font-size: 16px;
-            cursor: pointer;
-            transition: all 1s ease-in-out;
-        }
-        .login-container button:hover {
-            background-color: transparent;
-            color: #d9bf77;
-            border: 1px solid #d9bf77;
-            transition: all 0.25s ease-in-out;
-        }
-        .login-container p {
-            text-align: center;
-            margin-top: 10px;
-            font-size: 14px;
-            color: #636e72;
-        }
-        .login-container a {
-            color: #0984e3;
-            text-decoration: none;
-        }
-        .login-container a:hover {
-            text-decoration: underline;
-        }
-    </style>
-</head>
-<body>
-    <div class="login-container">
-        <a href="/Home">Homepage</a>
-        <h1>Login</h1>
-        <form method="post" action="/account/login">
-            <div>
-                <label>Email</label>
-                <input type="text" name="email" placeholder="Email" required>
-            </div>
-            <div>
-                <label>Password</label>
-                <input type="password" name="password" placeholder="Password" required>
-            </div>
-            <button type="submit">Log In</button>
-        </form>
-        <p>Don't have an account? <a href="./Register">Sign Up</a></p>
-    </div>
-</body>
-</html>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Login</title>
+    <link rel="stylesheet" href="~/css/flaticon.css">
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            let inputs = document.querySelectorAll(".input-field");
+            inputs.forEach(input => {
+                input.addEventListener("focus", function () {
+                    let label = this.parentNode.querySelector("label");
+                    label.style.top = "5px";
+                    label.style.left = "12px";
+                    label.style.fontSize = "12px";
+                    label.style.color = "#d9bf77";
+                    this.style.borderColor = "#d9bf77";
+                });
 
+                input.addEventListener("blur", function () {
+                    if (!this.value) {
+                        let label = this.parentNode.querySelector("label");
+                        label.style.top = "50%";
+                        label.style.left = "12px";
+                        label.style.fontSize = "16px";
+                        label.style.color = "#636e72";
+                    }
+                    this.style.borderColor = "#dfe6e9";
+                });
+            });
+
+            // Toggle Password Visibility
+            document.querySelector("#togglePassword").addEventListener("click", function () {
+                let passwordField = document.querySelector("#passwordField");
+                let icon = this.querySelector("i");
+
+                if (passwordField.type === "password") {
+                    passwordField.type = "text";
+                    icon.classList.remove("fa-eye");
+                    icon.classList.add("fa-eye-slash");
+                } else {
+                    passwordField.type = "password";
+                    icon.classList.remove("fa-eye-slash");
+                    icon.classList.add("fa-eye");
+                }
+            });
+        });
+    </script>
+    <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+</head>
+
+<body style="margin: 0; padding: 0; font-family: Arial, sans-serif; background: linear-gradient(135deg, #f5f5f5, #fcedd2); height: 100vh; display: flex; justify-content: center; align-items: center;">
+
+    <div style="width: 420px; background-color: white; padding: 40px; border-radius: 10px; box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); text-align: center;">
+        <!-- Header Section -->
+        <div style="display: flex; align-items: center; justify-content: center; margin-bottom: 25px;">
+            <a class="navbar-brand" asp-controller="Home" asp-action="Index" style="font-size: 24px; font-weight: bold; display: flex; align-items: center; color: #d9bf77; text-decoration: none;">
+                <span class="flaticon-lotus" style="font-size: 30px; margin-right: 10px;"></span>
+                Energen
+            </a>
+        </div>
+
+        <h2 style="font-size: 28px; font-weight: bold; color: #636e72;">Login your account</h2>
+
+        <!-- Login Form -->
+        <form method="post" asp-controller="Account" asp-action="Login">
+            <div style="position: relative; text-align: left; margin-bottom: 20px;">
+                <label style="position: absolute; left: 12px; top: 50%; transform: translateY(-50%); font-size: 16px; color: #636e72; transition: all 0.3s;">Email</label>
+                <input type="text" name="email" class="input-field" required
+                       style="width: 100%; padding: 15px 12px; border: 1px solid #dfe6e9; border-radius: 6px; box-sizing: border-box; font-size: 16px; outline: none; transition: border-color 0.3s;">
+            </div>
+
+            <div style="position: relative; text-align: left; margin-bottom: 20px;">
+                <label style="position: absolute; left: 12px; top: 50%; transform: translateY(-50%); font-size: 16px; color: #636e72; transition: all 0.3s;">Password</label>
+                <input type="password" name="password" id="passwordField" class="input-field" required
+                       style="width: 100%; padding: 15px 12px; border: 1px solid #dfe6e9; border-radius: 6px; box-sizing: border-box; font-size: 16px; outline: none; transition: border-color 0.3s; padding-right: 40px;">
+                <span id="togglePassword" style="position: absolute; right: 12px; top: 50%; transform: translateY(-50%); cursor: pointer; color: #636e72;">
+                    <i class="fas fa-eye"></i>
+                </span>
+            </div>
+
+            <button type="submit" style="width: 100%; padding: 12px; background-color: #d9bf77; border: 1px solid #d9bf77; border-radius: 6px; color: white; font-size: 18px; cursor: pointer; transition: all 0.3s;">
+                Sign In
+            </button>
+            <input type="hidden" name="returnUrl" value="@Context.Request.Query["returnUrl"]" />
+            <p style="margin-top: 18px; font-size: 16px; color: #636e72;">
+                Don't have an account? <a asp-controller="Account" asp-action="Register" style="color: #0984e3; text-decoration: none;">Sign Up</a>
+            </p>
+        </form>
+    </div>
+
+</body>
+
+</html>

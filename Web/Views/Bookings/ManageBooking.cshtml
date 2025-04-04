@@ -1,63 +1,259 @@
-﻿@model IEnumerable<BusinessObject.Entities.Booking>
+﻿@using DataAccessLayer.Commons
+@model PaginationResult<BusinessObject.Entities.Booking>
 
 @{
     ViewData["Title"] = "Manage Booking";
     Layout = "~/Views/Shared/_ManageAndDashBoardLayout.cshtml";
+
+
 }
 
-<h1>Quản lý Booking</h1>
+<h1>Management Booking</h1>
+
+<form method="get" class="mb-3">
+    <div class="row">
+        <div class="col">
+            <label for="selectedDate">Date</label>
+            <input type="date" id="selectedDate" class="form-control" value="@DateTime.Now.ToString("yyyy-MM-dd")" disabled />
+        </div>
+
+        <div class="col">
+            <label for="checkinCode">Check-in Code</label>
+            <input type="text" id="checkinCode" class="form-control" placeholder="Search By check-in" />
+        </div>
+        <div class="col">
+            <button type="button" class="btn btn-primary mt-4" id="searchBtn">Search</button>
+        </div>
+
+    </div>
+</form>
 
 <table class="table">
     <thead>
         <tr>
-            <th>Khách hàng</th>
-            <th>Booking ID</th>
+            <th>CheckIn Code</th>
+            <th>Service </th>
+            <th>Customer</th>
+            <th>Time Start</th>
+            <th>Time End</th>
             <th>Check-in</th>
-            <th>Ghi chú</th>
+            <th>Note</th>
             <th>Check-out</th>
         </tr>
     </thead>
     <tbody>
-        @foreach (var booking in Model)
+        @foreach (var booking in Model.PageContent)
         {
             <tr id="row-@booking.Id">
-                <!-- Hiển thị tên khách hàng -->
+                <td>
+
+                    <span class="check-in-code" data-id="@booking.Id"></span>
+
+                </td>
+                <td>@booking.ServiceNavigation.ServiceName</td>
+
                 <td>@booking.CustomerNavigation.FullName</td>
-
-                <!-- Booking ID -->
-                <td>@booking.Id</td>
-
+                <td>@booking.ReservedStartTime.ToString("HH:mm")</td>
+                <td>@booking.ReservedEndTime.ToString("HH:mm")</td>
                 <!-- Cột Check-in -->
                 <td>
-                    @if (booking.CheckinTime == null)
+                    <form asp-action="Checkin" asp-controller="Bookings" id="checkin-form-@booking.Id" method="POST">
+                        <input type="hidden" name="bookingId" value="@booking.Id" />
+                        <input type="hidden" name="checkinCode" id="checkin-code-@booking.Id" value="" />
+
+                        @if (booking.CheckinTime == null)
+                        {
+                            <button type="submit" id="checkin-btn-@booking.Id" class="btn btn-success checkin-btn">
+                                Check
+                            </button>
+                        }
+                        else
+                        {
+                            <span class="badge bg-success">Checked</span>
+                        }
+                    </form>
+
+                </td>
+
+                <td class="note-section">
+                    @if (User.IsInRole("3") && booking.CheckinTime != null)
                     {
-                        <input type="text" id="checkin-code-@booking.Id" placeholder="Nhập mã 6 số" class="form-control" />
-                        <button class="btn btn-success checkin-btn" onclick="checkin('@booking.Id')">Check-in</button>
+                        if (!string.IsNullOrEmpty(booking.Note))
+                        {
+                            <button type="button" class="btn btn-success mb-3" disabled>
+                                Noted
+                            </button>
+                        }
+                        else
+                        {
+                            <a href="javascript:void(0);" data-bs-toggle="modal" data-bs-target="#NoteModal"
+                               onclick="document.getElementById('bookingId').value='@booking.Id';">
+                                <button type="button" class="btn btn-success mb-3">
+                                    Note
+                                </button>
+                            </a>
+                        }
                     }
                     else
                     {
-                        <span class="badge bg-success">Đã Check-in</span>
+                        <button type="button" class="btn btn-secondary mb-3" disabled>
+                            Note 
+                        </button>
                     }
                 </td>
 
-                <!-- Cột Ghi chú -->
-                <td class="note-section" style="display: @(booking.CheckinTime != null ? "block" : "none")">
-                    <input type="text" id="note-@booking.Id" class="form-control note-input" placeholder="Nhập ghi chú" />
-                    <button class="btn btn-warning note-btn" onclick="saveNote('@booking.Id')">Lưu Note</button>
-                </td>
 
                 <!-- Cột Check-out -->
                 <td>
-                    @if (!string.IsNullOrEmpty(booking.Note))
-                    {
-                        <button class="btn btn-danger checkout-btn" onclick="checkout('@booking.Id')">Check-out</button>
-                    }
+                    <form asp-action="Checkout" asp-controller="Bookings" id="checkin-form-@booking.Id" method="POST">
+                        <input type="hidden" name="bookingId" value="@booking.Id" />
+                        <input type="hidden" name="checkinCode" id="checkin-code-@booking.Id" value="" />
+
+                        @if (booking.CheckoutTime == null)
+                        {
+                            @if (User.IsInRole("2") &&  string.IsNullOrEmpty(booking.Note))
+                            {
+                                <button type="button" class="btn btn-secondary" disabled>
+                                    Check
+                                </button>
+                            }
+                            else if (User.IsInRole("2") && !string.IsNullOrEmpty(booking.Note))
+                            {
+                                <button type="submit" id="checkin-btn-@booking.Id" class="btn btn-success checkin-btn">
+                                    Check
+                                </button>
+                            }
+                            else if (User.IsInRole("3"))
+                            {
+                                <button type="button" class="btn btn-secondary" disabled>
+                                    Check
+                                </button>
+                            }
+                            else
+                            {
+                                <button type="button" class="btn btn-secondary" disabled>
+                                    Checked
+                                </button>
+                            }
+                        }
+                        else
+                        {
+                            <span class="badge bg-success">Checked</span>
+                        }
+                    </form>
+
                 </td>
+ 
             </tr>
         }
     </tbody>
 </table>
 
-    <script src="~/lib/microsoft/signalr/dist/browser/signalr.js"></script>
-    <script src="~/js/bookingHub.js"></script>
+
+<!-- Pagination -->
+<div class="pagination-container">
+    @for (int i = 1; i <= Model.TotalPage; i++)
+    {
+        <a href="?page=@i" class="btn btn-link">@i</a>
+    }
+</div>
+<div class="modal fade" id="NoteModal" tabindex="-1" aria-labelledby="NoteModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="NoteModalLabel">Add Note</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <<form id="noteForm" method="post" asp-action="SaveNote" asp-controller="Bookings">
+                    <input type="hidden" id="bookingId" name="bookingId" />
+                    <div class="mb-3">
+                        <label for="note" class="form-label">Note</label>
+                        <textarea class="form-control" id="note" name="note" rows="3"></textarea>
+                    </div>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-success">Save Note</button>
+                </form>
+
+
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        const checkInCodeElements = document.querySelectorAll('.check-in-code');
+
+        checkInCodeElements.forEach(function(element) {
+            const bookingId = element.getAttribute('data-id');
+
+            if (bookingId) {
+                // Cắt Guid thành chuỗi chỉ chứa các ký tự số
+                const numericId = bookingId.replace(/[^0-9]/g, '');
+
+                // Lấy 6 chữ số đầu tiên từ chuỗi số
+                const checkInCode = numericId.substring(0, 6);
+
+                // Hiển thị CheckInCode (đảm bảo có 6 chữ số)
+                element.textContent = checkInCode.padStart(6, '0'); // Đảm bảo có đủ 6 chữ số
+            }
+        });
+    });
+
+          
+
+</script>
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const searchBtn = document.getElementById("searchBtn");
+        const input = document.getElementById("checkinCode");
+
+        searchBtn.addEventListener("click", function () {
+            const searchValue = input.value.trim().toLowerCase();
+            const rows = document.querySelectorAll("table tbody tr");
+
+            rows.forEach(row => {
+                const checkInCell = row.querySelector(".check-in-code");
+                if (checkInCell) {
+                    const checkInCode = checkInCell.textContent.trim().toLowerCase();
+                    const isMatch = checkInCode.includes(searchValue);
+
+                    row.style.display = isMatch || searchValue === "" ? "" : "none";
+                }
+            });
+        });
+    });
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/6.0.0/signalr.min.js"></script>
+
+<script>
+        // Khai báo và khởi tạo connection
+    let isReloaded = false;
+
+    // Tạo kết nối SignalR
+    const connection = new signalR.HubConnectionBuilder()
+        .withUrl("/bookingHub") // Đảm bảo URL chính xác
+        .build();
+
+    // Kiểm tra kết nối và xử lý các sự kiện SignalR
+    connection.start().then(() => {
+        const urlParams = new URLSearchParams(window.location.search);
+        if (urlParams.get("updated") === "true" && !isReloaded) {
+            isReloaded = true; // Đánh dấu đã reload
+            connection.invoke("NotifyUpdate").catch(err => console.error(err));
+        }
+
+        // Lắng nghe sự kiện từ SignalR
+        connection.on("ReceiveBookingUpdate", () => {
+            location.reload(); // Reload trang khi nhận được tín hiệu
+        });
+    }).catch(err => {
+        console.error("Error starting SignalR connection:", err);
+    });
+
+</script>
+
+
 

@@ -1,7 +1,9 @@
-﻿@model BusinessObject.Entities.Service
+﻿@using System.Security.Claims
+@model BusinessObject.Entities.Service
 
 @{
     Layout = "~/Views/Shared/_HomeLayout.cshtml";
+    var userRole = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Role)?.Value;
 }
 
 <div class="container mt-5">
@@ -9,7 +11,6 @@
         <h2 class="text-center text-primary">Service Details</h2>
         <hr>
 
-        <!-- Phần 1 + Phần 2: Thumbnail + Thông tin dịch vụ -->
         <div class="row">
             <!-- Phần 1: Hình ảnh chính -->
             <div class="col-md-6">
@@ -20,12 +21,12 @@
             <div class="col-md-6">
                 <h3 class="service-title">@Model.ServiceName</h3>
                 <p><strong>Duration:</strong> @Model.Duration minutes</p>
-                <p><strong>Price:</strong> @string.Format("{0:N0}", Model.Price) VND</p>
+                <p><strong>Price:</strong> $@string.Format("{0:N0}", Model.Price)</p>
                 <p class="category"><strong>Category:</strong> @Model.ServiceCategoryNavigation?.Name</p>
                 <p class="skin-type"><strong>Skin Types:</strong> @string.Join(", ", Model.SkinTypes.Select(st => st.Name))</p>
 
                 <!-- ⭐ Hiển thị Rating Trung Bình -->
-     @*            <p>
+                @*            <p>
                     <strong>Rating:</strong>
                     <span class="rating">@Html.Raw(GetStarRating(Model.AverageRating))</span>
                     (@Model.AverageRating.ToString("0.0")/5)
@@ -33,15 +34,22 @@
 
                 <!-- Action Buttons -->
                 <div style="display: flex; justify-content: center; align-items: center; gap: 20px; margin-top: 20px;">
-                    <a asp-controller="Bookings" asp-action="Index" asp-route-id="@Model.Id"
-                       style="background-color: #d4af37; color: white; border-radius: 8px; padding: 12px 24px; font-size: 16px; font-weight: bold; text-transform: uppercase; text-decoration: none; display: inline-block;">
-                        Booking Now
-                    </a>
+                    @if (userRole == "4")
+                    {
+                        <a asp-controller="Bookings" asp-action="Index" asp-fragment="services-section" asp-route-id="@Model.Id"
+                           class="btn btn-primary btn-sm px-2 py-2">                             
+                            Booking Now
+                        </a>
 
-                    <a asp-controller="Chat" asp-action="Advisory" asp-route-serviceId="@Model.Id"
-                       style="background-color: #28a745; color: white; border-radius: 8px; padding: 12px 24px; font-size: 16px; font-weight: bold; text-transform: uppercase; text-decoration: none; display: inline-block;">
-                        Advise
-                    </a>
+                    }
+                    @if (userRole == null)
+                    {
+                        <a asp-controller="Account" asp-action="Login"
+                           asp-route-returnUrl="@Url.Action("Index", "Bookings", new { id = @Model.Id })#services-section"
+                           class="btn btn-primary btn-sm px-2 py-2">
+                            Book via Login
+                        </a>
+                    }
                 </div>
 
 

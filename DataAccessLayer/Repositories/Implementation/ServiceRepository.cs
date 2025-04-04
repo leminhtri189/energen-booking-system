@@ -12,55 +12,114 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
+using Shared.File;
 
 namespace DataAccessLayer.Repositories.Implementation
 {
     public class ServiceRepository : GenericRepository<Service>, IServiceRepository
     {
-        public ServiceRepository(ApplicationDbContext context) : base(context) { }
+        private readonly FirebaseStorage _firebaseStorage;
+
+        public ServiceRepository(ApplicationDbContext context, FirebaseStorage firebaseStorage) : base(context) {
+        _firebaseStorage = firebaseStorage;
+        }
+
+        public async Task CreateService(Service service, IFormFile thumbnail, ICollection<IFormFile> serviceImages, List<Guid> skinTypeIds)
+        {
+            service.Id = Guid.NewGuid();
+
+            service.Thumbnail = await _firebaseStorage.Upload(thumbnail);
+
+            await ((ApplicationDbContext)context).Services.AddAsync(service);
+            await ((ApplicationDbContext)context).SaveChangesAsync();
+
+            if (serviceImages != null && serviceImages.Any())
+            {
+                var imageEntities = new List<ServiceImage>();
+
+                foreach (var file in serviceImages)
+                {
+                    if (file.Length > 0)
+                    {
+                        string fileUrl = await _firebaseStorage.Upload(file);
+                        imageEntities.Add(new ServiceImage
+                        {
+                            ImageUrl = fileUrl,
+                            ServiceId = service.Id
+                        });
+                    }
+                }
+
+                if (imageEntities.Count > 0)
+                {
+                    await ((ApplicationDbContext)context).ServiceImages.AddRangeAsync(imageEntities);
+                }
+            }
+
+            if (skinTypeIds != null && skinTypeIds.Any())
+            {
+                var skinTypes = await ((ApplicationDbContext)context).SkinTypes
+                                     .Where(st => skinTypeIds.Contains(st.Id))
+                                     .ToListAsync();
+
+                service.SkinTypes = skinTypes;
+            }
+
+            await context.SaveChangesAsync();
+        }
+
+
 
         public async Task<PaginationResult<Service>> GetService(int page, int page_size, bool include_removed = false)
         {
             return await AsPaginatedAsync(page, page_size, filter: x => x.Status == ServiceStatus.Available);
         }
 
-        public async Task<ICollection<Service>> GetServices(string? searchKey, Guid? categoryId, Guid? skinTypeId, int? page, int? pageSize)
+        public async Task<PaginationResult<Service>> GetServices(string? searchKey, Guid? categoryId, Guid? skinTypeId, int? page, int? pageSize)
         {
-            var query = ((ApplicationDbContext)context).Services
-                .Include(m => m.ServiceCategoryNavigation) // Load thông tin danh mục
-                .Include(m => m.SkinTypes) // Load trực tiếp danh sách SkinType
-                .OrderByDescending(m => m.CreatedAt)
-                .AsQueryable();
+            IQueryable<Service> query = context.Set<Service>()
+                .Include(m => m.ServiceCategoryNavigation)
+                .Include(m => m.SkinTypes)
+                .OrderByDescending(m => m.CreatedAt);
 
-            // Lọc theo từ khóa tìm kiếm
             if (!string.IsNullOrEmpty(searchKey))
             {
-                query = query.Where(m => m.ServiceName.Contains(searchKey) ||
-                                         m.Description.Contains(searchKey));
+                query = query.Where(m => m.ServiceName.Contains(searchKey));
             }
 
-            // Lọc theo danh mục
             if (categoryId.HasValue)
             {
                 query = query.Where(m => m.ServiceCategoryId == categoryId);
             }
 
-            // Lọc theo loại da (Many-to-Many trực tiếp, không có bảng trung gian)
             if (skinTypeId.HasValue)
             {
                 query = query.Where(m => m.SkinTypes.Any(st => st.Id == skinTypeId));
             }
-            query = query.OrderByDescending(m => m.CreatedAt);
-            // Phân trang
+            int totalItemCount = await query.CountAsync();
+
+            int totalPage = (page.HasValue && pageSize.HasValue && pageSize > 0)
+                ? (int)Math.Ceiling((double)totalItemCount / pageSize.Value)
+                : 1;
+
             if (page.HasValue && pageSize.HasValue && page > 0 && pageSize > 0)
             {
-                query = query
-                    .Skip((page.Value - 1) * pageSize.Value)
-                    .Take(pageSize.Value);
+                query = query.Skip((page.Value - 1) * pageSize.Value).Take(pageSize.Value);
             }
 
-            return await query.ToListAsync();
+            var pageContent = await query.ToListAsync();
+
+            return new PaginationResult<Service>
+            {
+                TotalPage = totalPage,
+                CurrentPage = page ?? 1,
+                PageSize = pageSize ?? totalItemCount,
+                TotalItemCount = totalItemCount,
+                PageContent = pageContent
+            };
         }
+
 
     }
 }

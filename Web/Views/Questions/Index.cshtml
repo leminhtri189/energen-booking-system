@@ -5,16 +5,17 @@
 }
 
 <div class="container mt-5">
-    <h1 class="text-center text-primary fw-bold">📝 Question List</h1>
+    <h1 class="text-center text-primary fw-bold">Question List</h1>
     <form id="quizForm" method="post" asp-controller="Questions" asp-action="SubmitAnswers" class="mt-4">
         @foreach (var question in Model)
         {
             <div class="card my-3 p-4 shadow-lg border-0">
-                <h5 class="text-dark fw-bold">@question.OrderNo. @question.Content</h5>
-                <div class="mt-3">
-                    @foreach (var answer in question.AnswerViewModels)
+                <h5 class="text-dark fw-bold mb-4">@question.OrderNo. @question.Content</h5>
+
+                <div class=" flex-wrap justify-content-center gap-3">
+                    @foreach (var answer in question.AnswerViewModels.OrderBy(a => a.AnswerContent.FirstOrDefault()))
                     {
-                        <div class="form-check option-hover p-2 rounded">
+                        <div class="form-check option-hover p-2 rounded  align-items-center" style="min-width: 200px;">
                             <input class="form-check-input" type="radio" name="SelectedAnswers[@question.OrderNo]"
                                    value="@answer.Id" id="answer_@answer.Id" required>
                             <label class="form-check-label ms-2" for="answer_@answer.Id">
@@ -24,11 +25,12 @@
                     }
                 </div>
             </div>
+
         }
 
         <div class="text-center mt-4">
-            <button type="submit" class="btn btn-lg btn-success px-5 py-3 shadow-lg fw-bold">
-                🚀 Gửi câu trả lời
+            <button type="submit" class="btn btn-outline-primary p-3 px-5 py-4 ml-md-2" style="margin: 20px">
+                Analysis
             </button>
         </div>
     </form>

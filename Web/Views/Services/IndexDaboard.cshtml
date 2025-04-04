@@ -1,13 +1,16 @@
-﻿@model IEnumerable<Web.Models.ServicesViewModel>
+﻿@model ServiceDashboardViewModel
 
 @{
-    ViewData["Title"] = "Services";
+    ViewData["Title"] = "Service Dashboard";
     Layout = "~/Views/Shared/_ManageAndDashBoardLayout.cshtml";
 }
 
-<h1>Services</h1>
-<a href="#" class="btn btn-primary mb-3" data-bs-toggle="modal" data-bs-target="#createServiceModal">Create New Service</a>
+<h1>Service Management</h1>
+<button type="button" class="btn btn-success mb-3" style="width: 20%;" data-bs-toggle="modal" data-bs-target="#createServiceModal">
+    Create New Service
+</button>
 
+<!-- Bảng danh sách dịch vụ -->
 <table class="table table-bordered table-striped">
     <thead>
         <tr>
@@ -20,16 +23,16 @@
         </tr>
     </thead>
     <tbody>
-        @foreach (var service in Model)
+        @foreach (var service in Model.Services.PageContent)
         {
             <tr>
                 <td>@service.ServiceName</td>
-                <td>@service.Description</td>
+                <td style="max-width: 200px; word-wrap: break-word; white-space: normal;">@service.Description</td>
                 <td>@service.Duration min</td>
-                <td>@service.Price$</td>
-                <td>@service.CategotyName</td>
+                <td>$@service.Price</td>
+                <td>@service.ServiceCategoryNavigation.Name</td>
                 <td>
-                    <a asp-action="Details" asp-route-id="@service.Id" class="btn btn-info btn-sm">View</a>
+                    <a asp-action="Details" asp-fragment="services-section" asp-route-id="@service.Id" class="btn btn-info btn-sm">View</a>
                     <a asp-action="Edit" asp-route-id="@service.Id" class="btn btn-warning btn-sm">Edit</a>
                     <a asp-action="Delete" asp-route-id="@service.Id" class="btn btn-danger btn-sm" onclick="return confirm('Are you sure?')">Delete</a>
                 </td>
@@ -38,7 +41,30 @@
     </tbody>
 </table>
 
-<!-- Modal for Creating Service -->
+<nav>
+    <ul class="pagination justify-content-center">
+        @if (Model.Services.CurrentPage > 1)
+        {
+            <li class="page-item">
+                <a class="page-link" asp-action="IndexDaboard" asp-route-page="@(Model.Services.CurrentPage - 1)">Previous</a>
+            </li>
+        }
+
+        @for (int i = 1; i <= Model.Services.TotalPage; i++)
+        {
+            <li class="page-item @(i == Model.Services.CurrentPage ? "active" : "")">
+                <a class="page-link" asp-action="IndexDaboard" asp-route-page="@i">@i</a>
+            </li>
+        }
+
+        @if (Model.Services.CurrentPage < Model.Services.TotalPage)
+        {
+            <li class="page-item">
+                <a class="page-link" asp-action="IndexDaboard" asp-route-page="@(Model.Services.CurrentPage + 1)">Next</a>
+            </li>
+        }
+    </ul>
+</nav>
 <!-- Modal -->
 <div class="modal fade" id="createServiceModal" tabindex="-1" aria-labelledby="createServiceModalLabel" aria-hidden="true">
     <div class="modal-dialog">
@@ -47,71 +73,134 @@
                 <h5 class="modal-title" id="createServiceModalLabel">Create New Service</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            <div class="modal-body">
-                <!-- Bước 1 -->
-                <div id="step1">
-                    <h4>Step 1: Enter Service Details</h4>
-                    <div class="mb-3">
-                        <label for="serviceName" class="form-label">Service Name</label>
-                        <input type="text" class="form-control" id="serviceName">
-                    </div>
-                    <div class="mb-3">
-                        <label for="description" class="form-label">Description</label>
-                        <textarea class="form-control" id="description"></textarea>
-                    </div>
-                    <button type="button" class="btn btn-primary" id="nextStep">Next</button>
-                </div>
+            <form asp-controller="Services" asp-action="Create" id="createServiceForm" enctype="multipart/form-data">
+                <div class="modal-body">
+                    <!-- Bước 1 -->
+                    <div id="step1">
+                        <h4>Step 1: Enter Service Details</h4>
 
-                <!-- Bước 2 (Ẩn ban đầu) -->
-                <div id="step2" style="display: none;">
-                    <h4>Step 2: Upload Images</h4>
-                    <div class="mb-3">
-                        <label for="thumbnail" class="form-label">Thumbnail</label>
-                        <input type="file" class="form-control" id="thumbnail">
-                    </div>
-                    <div class="mb-3">
-                        <label for="images" class="form-label">Upload Additional Images</label>
-                        <input type="file" class="form-control" id="images" multiple>
-                    </div>
-                    <div id="imagePreview" class="d-flex"></div> <!-- Ảnh preview sẽ hiển thị ở đây -->
+                        <div class="mb-3">
+                            <label for="serviceName" class="form-label">Service Name</label>
+                            <input type="text" class="form-control" asp-for="NewService.ServiceName">
+                            @Html.ValidationMessageFor(m => m.NewService.ServiceName, "", new { @class = "text-danger" })
+                        </div>
 
-                    <button type="button" class="btn btn-secondary" id="prevStep">Back</button>
-                    <button type="button" class="btn btn-success">Submit</button>
+                        <div class="mb-3">
+                            <label for="duration" class="form-label">Duration (minutes)</label>
+                            <input type="number" class="form-control" asp-for="NewService.Duration">
+                            @Html.ValidationMessageFor(m => m.NewService.Duration, "", new { @class = "text-danger" })
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="price" class="form-label">Price ($)</label>
+                            <input type="number" class="form-control" asp-for="NewService.Price" step="0.01" />
+                            @Html.ValidationMessageFor(m => m.NewService.Price, "", new { @class = "text-danger" })
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="description" class="form-label">Description</label>
+                            <textarea class="form-control" asp-for="NewService.Description"></textarea>
+                            @Html.ValidationMessageFor(m => m.NewService.Description, "", new { @class = "text-danger" })
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="category" class="form-label">Category</label>
+                            <select class="form-control" asp-for="NewService.ServiceCategoryId" asp-items="@(new SelectList(Model.Categories, "Id", "Name"))">
+                                <option value="">-- Select Category --</option>
+                            </select>
+                            @Html.ValidationMessageFor(m => m.NewService.ServiceCategoryId, "", new { @class = "text-danger" })
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Skin Type</label>
+                            <div>
+                                @foreach (var skinType in Model.SkinTypes)
+                                {
+                                    <label>
+                                        <input type="checkbox" name="NewService.SkinTypeIds" value="@skinType.Id"
+                                        @(Model.NewService.SkinTypeIds.Contains(skinType.Id) ? "checked" : "") />
+                                        @skinType.Name
+                                    </label>
+                                }
+                            </div>
+                            @Html.ValidationMessageFor(m => m.NewService.SkinTypeIds, "", new { @class = "text-danger" })
+                        </div>
+
+                        <button type="button" class="btn btn-primary" id="nextStep">Next</button>
+                    </div>
+
+                    <!-- Bước 2 (Ẩn ban đầu) -->
+                    <div id="step2" style="display: none;">
+                        <h4>Step 2: Upload Images</h4>
+                        
+                        <div class="mb-3">
+                            <label for="thumbnail" class="form-label">Thumbnail</label>
+                            <input type="file" class="form-control" asp-for="NewService.Thumbnail">
+                            @Html.ValidationMessageFor(m => m.NewService.Thumbnail, "", new { @class = "text-danger" })
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="images" class="form-label">Upload Additional Images</label>
+                            <input type="file" class="form-control" asp-for="NewService.Images" multiple>
+                            @Html.ValidationMessageFor(m => m.NewService.Images, "", new { @class = "text-danger" })
+                        </div>
+
+                        <div id="imagePreview" class="d-flex mt-2"></div> <!-- Ảnh preview sẽ hiển thị ở đây -->
+
+                        <button type="button" class="btn btn-secondary" id="prevStep">Back</button>
+                        <button type="submit" class="btn btn-success">Submit</button>
+                    </div>
                 </div>
-            </div>
+            </form>
+
         </div>
     </div>
 </div>
 
+@Html.ValidationSummary(true, "Please correct the errors below.", new { @class = "text-danger" })
+
+
 
 @section Scripts {
+    <!-- Load jQuery trước khi sử dụng -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <!-- CKEditor bản mới -->
+    <script src="https://cdn.ckeditor.com/4.25.1-lts/standard/ckeditor.js"></script>
+
     <script>
-                document.getElementById("nextStep").addEventListener("click", function () {
-            document.getElementById("step1").style.display = "none";
-            document.getElementById("step2").style.display = "block";
+        // Kích hoạt CKEditor
+        $(document).ready(function () {
+            CKEDITOR.replace('description');
+
+            $("#nextStep").click(function () {
+                $("#step1").hide();
+                $("#step2").show();
+            });
+
+            $("#prevStep").click(function () {
+                $("#step2").hide();
+                $("#step1").show();
+            });
+
+            $("#images").change(function (event) {
+                let previewContainer = $("#imagePreview");
+                previewContainer.html("");
+
+                for (let file of event.target.files) {
+                    let reader = new FileReader();
+                    reader.onload = function (e) {
+                        let img = $("<img>").attr("src", e.target.result).css({
+                            width: "100px",
+                            marginRight: "10px"
+                        });
+                        previewContainer.append(img);
+                    };
+                    reader.readAsDataURL(file);
+                }
+            });
         });
-
-        document.getElementById("prevStep").addEventListener("click", function () {
-            document.getElementById("step2").style.display = "none";
-            document.getElementById("step1").style.display = "block";
-        });
-
-                document.getElementById("images").addEventListener("change", function (event) {
-            let previewContainer = document.getElementById("imagePreview");
-            previewContainer.innerHTML = ""; // Xóa các ảnh cũ trước khi thêm mới
-
-            for (let file of event.target.files) {
-                let reader = new FileReader();
-                reader.onload = function (e) {
-                    let img = document.createElement("img");
-                    img.src = e.target.result;
-                    img.style.width = "100px"; // Điều chỉnh kích thước ảnh
-                    img.style.marginRight = "10px";
-                    previewContainer.appendChild(img);
-                };
-                reader.readAsDataURL(file);
-            }
-        });
-
     </script>
 }
+
+

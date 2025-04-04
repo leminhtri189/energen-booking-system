@@ -41,6 +41,7 @@ namespace BusinessLogicLayer.Services.Implementation
                 Password = _tokenUtilities.HashPassword(password),
                 Gender = gender,
                 Role = role,
+                Avatar = "https://product.hstatic.net/1000069970/product/9_2ca4c9ad986041809fbc7707760324d3_large.png",
                 CreatedAt = DateTime.Now,
                 LastUpdate = DateTime.Now,
                 Status = UserStatus.Unverified,

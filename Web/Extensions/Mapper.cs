@@ -8,8 +8,7 @@ namespace Web.Extensions
     public class Mapper : Profile
     {
        public Mapper() {
-
-            CreateMap<ServicesViewModel, Service>().ReverseMap();
+            CreateMap<Service, ServiceViewModel>().ReverseMap();
             CreateMap<Question, QuestionsViewModel>()
                 .ForMember(dest => dest.AnswerViewModels, opt => opt.MapFrom(src => src.QuestionOptions));
 

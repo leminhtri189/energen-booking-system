@@ -88,37 +88,59 @@ namespace Web.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Login(AccountLoginViewModel loginInfo)
+        public async Task<IActionResult> Login(AccountLoginViewModel loginInfo,  string? returnUrl )
         {
-            //if (!ModelState.IsValid)
-            //{
-            //    return View(loginInfo);
-            //}
-
-            Console.WriteLine("Valid statement");
-
-            var user = await _service.GetUserWithEmail(loginInfo.Email, loginInfo.Password);
-
-            if (user == null)
+            if (!ModelState.IsValid)
             {
-                Console.WriteLine("Account not found");
+                TempData["ErrorMessage"] = "Invalid input. Please check your email and password.";
                 return View(loginInfo);
             }
 
-            Console.WriteLine("Valid account");
+            var user = await _service.GetUserWithEmail(loginInfo.Email, loginInfo.Password);
+            if (user == null)
+            {
+                TempData["ErrorMessage"] = "Incorrect email or password.";
+                return View(loginInfo);
+            }
 
             IList<Claim> claims = new List<Claim>
-            {
-                new Claim("Id", user.Id.ToString()),
-                new Claim(ClaimTypes.Email, user.Email),
-                new Claim(ClaimTypes.Role, ((int) user.Role).ToString()),
-                new Claim(ClaimTypes.Name, user.FullName)
-            };
+    {
+        new Claim("Id", user.Id.ToString()),
+        new Claim(ClaimTypes.Email, user.Email),
+       new Claim("Avatar", user.Avatar),
+        new Claim(ClaimTypes.Role, ((int) user.Role).ToString()),
+        new Claim(ClaimTypes.Name, user.FullName)
+    };
+
             ClaimsIdentity identity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
             ClaimsPrincipal principal = new ClaimsPrincipal(identity);
             await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, principal);
+            if (user.Role == Role.Admin)
+            {
+                return RedirectToAction("Index", "Dashboard");
+            }
+            if (user.Role == Role.Staff || user.Role == Role.Therapist )
+            {
+                return RedirectToAction("ManageBooking", "Bookings");
+            }
+            if(user.Role == Role.Manager)
+            {
+                return RedirectToAction("IndexDaboard", "Services");
+            }
+            if (!string.IsNullOrEmpty(returnUrl) && Url.IsLocalUrl(returnUrl))
+            {
+                return Redirect(returnUrl);
+            }
 
             return Redirect("/");
         }
+
+        public async Task<IActionResult> Logout()
+        {
+            await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+            return RedirectToAction("Login", "Account"); // hoặc trang nào bạn muốn người dùng đến sau khi đăng xuất
+        }
+
+
     }
 }

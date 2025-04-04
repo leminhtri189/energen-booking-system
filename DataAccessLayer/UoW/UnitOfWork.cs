@@ -3,6 +3,7 @@ using DataAccessLayer.Commons.GenericRepo;
 using DataAccessLayer.Context;
 using DataAccessLayer.Repositories.Implementation;
 using DataAccessLayer.Repositories.Interface;
+using Shared.File;
 using System.Collections;
 
 namespace DataAccessLayer.UoW
@@ -10,6 +11,7 @@ namespace DataAccessLayer.UoW
     public class UnitOfWork : IUnitOfWork
     {
         private readonly ApplicationDbContext _context;
+        private readonly FirebaseStorage _fileService;
         public IBookingRepository Bookings { get; private set; }
 
         public IQuestionRepository Questions { get; private set; }
@@ -20,13 +22,16 @@ namespace DataAccessLayer.UoW
 
         public IServiceRepository Services { get; private set; }
 
+        public ITherapistRepository Therapists { get; private set; }
+
         private Hashtable? _repositories;
 
-        public UnitOfWork(ApplicationDbContext context)
+        public UnitOfWork(ApplicationDbContext context,FirebaseStorage firebaseStorage)
         {
 
             _context = context;
-            Services = new ServiceRepository(context);
+            Therapists = new TherapistRepository(context);
+            Services = new ServiceRepository(context,firebaseStorage);
             Bookings = new BookingRepository(context);
             Users = new UserRepository(context);
             Questions = new QuestionRepository(context);

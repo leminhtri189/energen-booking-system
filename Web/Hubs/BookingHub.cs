@@ -4,9 +4,9 @@ namespace Web.Hubs
 {
     public class BookingHub : Hub
     {
-        public async Task SendBookingUpdate(Guid bookingId)
+        public async Task NotifyUpdate()
         {
-            await Clients.All.SendAsync("ReceiveBookingUpdate", bookingId);
+            await Clients.Others.SendAsync("ReceiveBookingUpdate");
         }
     }
 }

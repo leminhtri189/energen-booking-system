@@ -1,5 +1,6 @@
 ﻿using BusinessObject.Entities;
 using BusinessObject.Enums;
+using DataAccessLayer.Commons;
 using DataAccessLayer.Commons.GenericRepo;
 using DataAccessLayer.Context;
 using DataAccessLayer.Repositories.Interface;
@@ -36,5 +37,38 @@ namespace DataAccessLayer.Repositories.Implementation
 
             return await query.ToListAsync();
         }
+
+        public async Task<PaginationResult<Therapist>> GetTherapistsPaginated(int page, int pageSize)
+        {
+            var therapistsWithAvgRatingQuery = context.Set<Therapist>()
+                .Include(t => t.UserNavigation)
+                .Include(t => t.BookingNavigation)
+                .Select(t => new
+                {
+                    Therapist = t,
+                    AverageRating = t.BookingNavigation
+                        .SelectMany(b => context.Set<Feedback>().Where(f => f.BookingId == b.Id))
+                        .Average(f => (double?)f.TherapistRating) ?? 0
+                });
+
+            var totalCount = await therapistsWithAvgRatingQuery.CountAsync();
+
+            var paginatedTherapists = await therapistsWithAvgRatingQuery
+                .OrderByDescending(x => x.AverageRating) 
+                .ThenByDescending(x => x.Therapist.ExperienceYears ?? 0) 
+                .Skip((page - 1) * pageSize)
+                .Take(pageSize)
+                .ToListAsync();
+
+            return new PaginationResult<Therapist>
+            {
+                TotalPage = (int)Math.Ceiling((double)totalCount / pageSize),
+                CurrentPage = page,
+                PageSize = pageSize,
+                TotalItemCount = totalCount,
+                PageContent = paginatedTherapists.Select(x => x.Therapist).ToList()
+            };
+        }
+
     }
 }

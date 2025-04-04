@@ -1,6 +1,24 @@
-﻿@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
-@{
+﻿@{
+    Layout = "~/Views/Shared/_HomeLayout.cshtml";
 }
-trfcsdfwd
+
+<div style="max-width: 600px; margin: 100px auto; text-align: center; padding: 30px; border-radius: 15px; background: #fff; box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.1); border: 1px solid #eee;">
+    <div style="color: #D9534F; font-size: 50px;">❌</div>
+    <h2 style="color: #222; font-family: 'Times New Roman', serif; font-size: 28px; margin-bottom: 15px;">
+        PAYMENT FAILED
+    </h2>
+    <p style="font-size: 16px; color: #555; margin-bottom: 25px;">
+        Unfortunately, your payment could not be processed. Please try again or contact support.
+    </p>
+
+    <div style="margin-top: 20px;">
+        <a asp-controller="Home" asp-action="Index"
+           style="display: inline-block; padding: 12px 25px; background-color: #D9534F; color: #fff; text-decoration: none; font-weight: bold; border-radius: 5px; margin-right: 10px;">
+            Home Page
+        </a>
+        <a asp-controller="Services" asp-action="Index" asp-fragment="services-section"
+           style="display: inline-block; padding: 12px 25px; border: 2px solid #D9534F; color: #D9534F; text-decoration: none; font-weight: bold; border-radius: 5px;">
+            Try Again
+        </a>
+    </div>
+</div>

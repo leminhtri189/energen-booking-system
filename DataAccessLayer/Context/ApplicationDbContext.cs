@@ -15,7 +15,6 @@ namespace DataAccessLayer.Context
         public DbSet<Service> Services { get; set; } = null!;
 
         public DbSet<ServiceImage> ServiceImages { get; set; } = null!;
-
         public DbSet<User> Users { get; set; } = null!;
 
         public DbSet<Therapist> Therapists { get; set; } = null!;

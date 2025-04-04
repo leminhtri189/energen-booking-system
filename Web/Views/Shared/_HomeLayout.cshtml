@@ -58,31 +58,50 @@
     <script src="~/js/google-map.js"></script>
     <script src="~/js/main.js"></script>
     <script>
-                    document.addEventListener("DOMContentLoaded", function () {
+        document.addEventListener("DOMContentLoaded", function () {
             let servicesLink = document.getElementById("servicesLink");
 
             if (servicesLink) {
                 servicesLink.addEventListener("click", function (event) {
                     if (window.location.pathname !== "/") {
                         event.preventDefault();
-                        window.location.href = "/#services-section";
+
+                        // Thay đổi URL mà không tải lại trang
+                        history.pushState(null, null, "/#services-section");
+
+                        // Cuộn mượt đến section
+                        let targetSection = document.querySelector("#services-section");
+                        if (targetSection) {
+                            targetSection.scrollIntoView({ behavior: "smooth" });
+                        }
                     }
                 });
+            }
 
-                // Kiểm tra nếu URL có chứa "#services-section" => Cuộn xuống ngay sau khi load trang
-                if (window.location.hash === "#services-section") {
-                    let targetSection = document.querySelector("#services-section");
-                    if (targetSection) {
-                        setTimeout(() => {
-                            targetSection.scrollIntoView({ behavior: "smooth" });
-                        }, 500);
-                    }
+            // Nếu trang mở với hash `#services-section`, cuộn xuống mà không gửi request lại
+            if (window.location.hash === "#services-section") {
+                let targetSection = document.querySelector("#services-section");
+                if (targetSection) {
+                    setTimeout(() => {
+                        targetSection.scrollIntoView({ behavior: "smooth" });
+                    }, 500);
+
+                    // Xóa hash sau khi cuộn để tránh reload lại khi F5
+                    history.replaceState(null, null, " ");
+                }
+            }
+
+            // Xử lý cuộn cho PaymentSuccess và PaymentFailed mà không tải lại trang
+            if (window.location.pathname.includes("TransactionCallback") || window.location.pathname.includes("PaymentFailed")) {
+                let successSection = document.querySelector("#services-section");
+                if (successSection) {
+                    setTimeout(() => {
+                        successSection.scrollIntoView({ behavior: "smooth" });
+                    }, 500);
                 }
             }
         });
-
-
-    </script> 
+    </script>
 
 
 </body>

@@ -1,169 +1,97 @@
-﻿@model BookingViewModel
+﻿@model BusinessObject.Entities.Service
 
 @{
     Layout = "~/Views/Shared/_HomeLayout.cshtml";
-    var today = DateTime.Now;
-    var maxDate = today.AddMonths(1);
 }
 
 <style>
-    .service-card {
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
-    }
 
-    .service-card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0px 10px 20px rgba(0, 0, 0, 0.1);
-    }
 
-    .service-img {
-    transition: transform 0.3s ease;
-    }
-
-    .service-card:hover .service-img {
-    transform: scale(1.05);
-    }
-    .chuyen-vien-card {
-        border: 1px solid #ddd;
-        border-radius: 8px;
-        padding: 15px;
-        margin: 10px;
-        text-align: center;
-        height: 100%;
-    }
-
-        .chuyen-vien-card img {
-            width: 50px;
-            height: 50px;
-            border-radius: 50%;
-        }
-
-    .carousel-control-prev, .carousel-control-next {
-        width: 5%;
-    }
-
-    .calendar {
-        margin-top: 20px;
-    }
-
-        .calendar .day {
-            padding: 10px;
-            margin: 5px;
-            border: 1px solid #ddd;
-            border-radius: 5px;
-            cursor: pointer;
-            text-align: center;
-            width: 80px;
-        }
-
-            .calendar .day.active {
-                background-color: #007bff;
-                color: white;
-            }
-
-        .calendar .time-slot {
-            padding: 10px;
-            margin: 5px;
-            border: 1px solid #ddd;
-            border-radius: 5px;
-            cursor: pointer;
-            text-align: center;
-            width: 80px;
-        }
-
-            .calendar .time-slot.disabled {
-                background-color: #f0f0f0;
-                cursor: not-allowed;
-            }
-
-    .calendar-header {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin-bottom: 10px;
-    }
 </style>
 
-<input type="hidden" id="serviceId" value="@Model.Service.Id" />
+<input type="hidden" id="serviceId" value="@Model.Id" />
 <div class="container">
-    <div class="d-flex justify-content-center align-items-center">
-        <div class="card service-card shadow-lg border-0 p-4 bg-white rounded-4">
-            <div class="card-body d-flex align-items-center">
-                <!-- Ảnh bên trái -->
-                <img src="@Model.Service.Thumbnail" alt="Service Image"
-                class="service-img rounded-3 border border-2 border-primary me-4"
-                width="140" height="100">
+    <div style="display: flex; justify-content: center; padding: 40px 20px; background-color: #fff;">
+        <div style="max-width: 700px; width: 100%; text-align: center; border: 1px solid #eee; padding: 30px; border-radius: 10px; box-shadow: 0px 8px 30px rgba(0, 0, 0, 0.05);">
+            <!-- Tên dịch vụ -->
+            <h2 style="font-size: 28px; font-weight: 600; letter-spacing: 2px; color: #000; margin-bottom: 10px;" class="text-center">
+                @Model.ServiceName.ToUpper()
+            </h2>
 
-                <!-- Nội dung bên phải -->
-                <div class="flex-grow-1">
-                    <h4 class="card-title fw-bold text-dark mb-3">@Model.Service.ServiceName</h4>
-                    <span>
-                        Duration: @Model.Service.Duration phút
-                    </span>
-                    <span >
-                        Price: @Model.Service.Price VND
-                    </span>
-                </div>
+            <div style="width: 80px; height: 2px; background-color: #d4af37; margin: 10px auto 20px;"></div>    
+            <div style="margin-bottom: 30px;">
+                <img src="@Model.Thumbnail" alt="Service Image" style="max-width: 100%; height: auto; border-radius: 1px; border: 1px solid #d4af37;">
+            </div>
+
+            <div style="display: flex; align-items: center; justify-content: center; gap: 20px;">
+                <span style="color: #d4af37; font-size: 20px; font-weight: bold;">Duration: @Model.Duration min</span>
+                <span style="color: #d4af37; font-size: 20px; font-weight: bold;">Price: $@Model.Price</span>
+
+                <a asp-controller="Services" asp-action="Details" asp-fragment="services-section" asp-route-id="@Model.Id "style="display: inline-block; padding: 7px 14px; border: 1px solid #d4af37; color: #d4af37; border-radius: 1px; text-decoration: none; transition: 0.3s;"
+                   onmouseover="this.style.backgroundColor='#d4af37'; this.style.color='#fff';"
+                   onmouseout="this.style.backgroundColor='transparent'; this.style.color='#d4af37';">
+                    Detail
+                </a>
             </div>
         </div>
     </div>
 
     <h3 class="text-center">Select Therapist</h3>
 
-    <h3>Chọn chuyên viên</h3>
-    <div id="therapistCarousel" class="carousel slide" data-bs-ride="carousel">
-        <div class="carousel-inner" id="therapistContainer">
-            <!-- Dữ liệu therapists sẽ được load vào đây -->
-        </div>
-
-        <!-- Nút Previous -->
-            <button class="carousel-control-prev" type="button" data-bs-target="#therapistCarousel" data-bs-slide="prev">
-                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-                <span class="visually-hidden">Previous</span>
-            </button>
-
-        <!-- Nút Next -->
-            <button class="carousel-control-next" type="button" data-bs-target="#therapistCarousel" data-bs-slide="next">
-                <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                <span class="visually-hidden">Next</span>
-            </button>
-        }
+    <!-- Button: Auto Select Therapist -->
+    <div class="text-end mb-3">
+        <button id="autoSelectBtn" class="btn btn-warning text-center">Please select a therapist for me</button>
     </div>
+        <div id="therapistContainer">
+        </div>
+    <p id="select-therapist-msg" class="text-center text-danger">
+        Please select therapist to select date and time.
+    </p>
 
+    <!-- Tiêu đề "Chọn ngày giờ" ban đầu ẩn -->
+    <h3 id="choose-date-title" style="display: none;">Select Date and Time</h3>
 
-
-    <h3>Chọn ngày giờ</h3>
     <div class="calendar" id="calendar-container" style="display: none;">
-        <div class="calendar-header">
+        <div class="calendar-header text-center">
             <button id="prev-week" onclick="prevWeek()">❮</button>
             <span id="week-label"></span>
             <button id="next-week" onclick="nextWeek()">❯</button>
         </div>
-        <div class="row" id="days"></div>
+        <div id="days-container" style="width: 100%; display: flex; justify-content: center; align-items: center; margin: 20px">
+            <div id="days"></div>
+        </div>
 
-        <h4 id="morning-title" style="display: none;">Buổi sáng</h4>
-        <div class="row" id="morning-slots"></div>
+        <h4 id="morning-title" class="text-center" style="display: none;">Morning</h4>
+        <div class="row text-center" id="morning-slots" ></div>
 
-        <h4 id="afternoon-title" style="display: none;">Buổi chiều</h4>
-        <div class="row" id="afternoon-slots"></div>
+        <h4 id="afternoon-title" style="display: none;" class="text-center">Afternoon</h4>
+        <div class="row text-center" id="afternoon-slots" ></div>
     </div>
 
 </div>
-<button id="btnThanhToan" class="btn btn-primary mt-3" onclick="thanhToan()">Thanh toán</button>
+<div style="display: flex; justify-content: flex-end; padding: 20px; margin:20px">
+    <button id="btnPayment" class="btn btn-primary btn-sm px-3 py-3"
+            style="display: none; align-self: center;"
+            onclick="payment()">
+        Payment for services
+    </button>
+</div>
+
+
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
-    document.addEventListener("DOMContentLoaded", function () {
         let selectedChuyenVienId = null;
-        let selectedDate = null;
-        let selectedTime = null;
-        let currentWeekStart = new Date();
+    let selectedDate = null;
+    let selectedTime = null;
+    let currentWeekStart = new Date(); // Biến toàn cục
+    let today = new Date(); // Biến toàn cục
 
-        const today = new Date();
+    today.setHours(0, 0, 0, 0); // Đặt giờ về 0 để tránh lỗi so sánh ngày
+
+    document.addEventListener("DOMContentLoaded", function () {
+        // Cập nhật ngày bắt đầu tuần
+        currentWeekStart.setDate(currentWeekStart.getDate() - currentWeekStart.getDay() + 1); // Set ngày bắt đầu tuần là thứ 2
         today.setHours(0, 0, 0, 0);
-
-        while (currentWeekStart < today || currentWeekStart.getDay() === 6 || currentWeekStart.getDay() === 0) {
-            currentWeekStart.setDate(currentWeekStart.getDate() + 1);
-        }
 
         function disableCalendar() {
             document.getElementById("calendar-container").style.display = "none";
@@ -179,51 +107,67 @@
         function selectTherapist(chuyenVienId) {
             selectedChuyenVienId = chuyenVienId;
             document.getElementById("calendar-container").style.display = "block";
-            document.getElementById("morning-title").style.display = "block";
-            document.getElementById("afternoon-title").style.display = "block";
-
-            let now = new Date();
-            let formattedDate = now.toLocaleDateString('vi-VN', { weekday: 'long', day: 'numeric', month: 'long' });
-            let formattedTime = now.toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' });
-            document.getElementById("week-label").textContent = `${formattedDate}, ${formattedTime}`;
-
+            $("#select-therapist-msg").hide();
             loadCalendar();
         }
 
         function loadCalendar() {
             let endDate = new Date();
             endDate.setDate(today.getDate() + 30);
-
             let weekEnd = new Date(currentWeekStart);
             weekEnd.setDate(currentWeekStart.getDate() + 6);
             weekEnd = weekEnd > endDate ? endDate : weekEnd;
 
-            document.getElementById("week-label").textContent = `Tuần từ ${currentWeekStart.toLocaleDateString('vi-VN')}`;
+            document.getElementById("week-label").textContent = `Week from ${currentWeekStart.toLocaleDateString('vi-VN')} to ${weekEnd.toLocaleDateString('vi-VN')}`;
 
-            let daysHtml = '';
+            let daysHtmlContent = '';
             let tempDate = new Date(currentWeekStart);
+
             while (tempDate <= weekEnd) {
-                if (tempDate.getDay() !== 6 && tempDate.getDay() !== 0) {
+                const dayOfWeek = tempDate.getDay();
+                if (dayOfWeek !== 6 && dayOfWeek !== 0) { // Bỏ qua thứ 7 và chủ nhật
                     let formattedDate = tempDate.toISOString().split('T')[0];
                     let isPast = tempDate < today;
                     let isSelected = formattedDate === selectedDate;
 
-                    daysHtml += `<div class="col-md-1 day ${isSelected ? 'active' : ''} ${isPast ? 'disabled' : ''}"
-                                 onclick="${!isPast ? `selectDate('${formattedDate}')` : ''}">
-                                    ${tempDate.toLocaleDateString('vi-VN', { weekday: 'long', day: 'numeric' })}
-                                </div>`;
+                        daysHtmlContent += `
+        <div class="day" style="
+            width: 60px; height: 80px;
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
+            text-align: center;
+            font-size: 14px;
+            background: white;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            ${isSelected ? 'background-color: #4caf50; color: white;' : ''}
+            ${isPast ? 'color: gray; cursor: not-allowed;' : 'cursor: pointer;'}
+        " onclick="${!isPast ? `selectDate('${formattedDate}', event)` : ''}">
+            <span style="font-weight: bold;">${tempDate.getDate()}</span>
+            <span style="font-size: 12px;">${tempDate.toLocaleDateString('en-US', { weekday: 'short' })}</span>
+        </div>
+    `;
+
                 }
                 tempDate.setDate(tempDate.getDate() + 1);
             }
-            document.getElementById("days").innerHTML = daysHtml;
+
+                document.getElementById("days").innerHTML = `
+        <div style="display: flex; justify-content: center; align-items: center; gap: 10px; flex-wrap: wrap;">
+            ${daysHtmlContent}
+        </div>
+    `;
+
 
             if (selectedDate) {
                 loadTimeSlots(selectedDate);
             }
         }
 
-        function selectDate(date) {
+        function selectDate(date, event) {
             selectedDate = date;
+            document.getElementById("morning-title").style.display = "block";
+            document.getElementById("afternoon-title").style.display = "block";
             document.querySelectorAll(".day").forEach(el => el.classList.remove("active"));
             event.target.classList.add("active");
             loadTimeSlots(date);
@@ -237,8 +181,11 @@
                 "13:00", "13:30", "14:00", "14:30", "15:00", "15:30", "16:00", "16:30"
             ];
 
+            // Khởi tạo các khung giờ cho buổi sáng và chiều
             timeSlots.forEach(slot => {
-                const slotHtml = `<div class="col-md-2 time-slot disabled">${slot}</div>`;
+                const slotHtml = `<div class="col-md-2 time-slot disabled" style="width: 70px; margin: 5px; text-align: center; padding: 5px;
+                                  border-radius: 5px; background-color: #f0f0f0; cursor: pointer;">
+                                  ${slot}</div>`;
                 slot.split(":")[0] < 12 ? morningHtml += slotHtml : afternoonHtml += slotHtml;
             });
 
@@ -251,166 +198,175 @@
                 url: '/Bookings/GetAvailableTimeSlots',
                 method: 'GET',
                 data: { therapistid: selectedChuyenVienId, date: date },
-                   success: function (response) {
-        if (!response.success) {
-            alert(response.message);
-            return;
-        }
+                success: function (response) {
+                    if (!response.success) {
+                        alert(response.message);
+                        return;
+                    }
 
-        console.log('response: ', response);
-
-        // Lấy danh sách kết quả từ response.data.result
-        let availableSlots = response.data.result;
-        console.log("slot",availableSlots);
-        document.querySelectorAll(".time-slot").forEach(slot => {
-            let time = slot.innerText.trim();
-
-
-             let formattedTime = time + ":00";
-
-        if (availableSlots[formattedTime] === true) {
-            slot.classList.remove("disabled");
-        }
-        });
-
-        // Thêm sự kiện click cho các time-slot
-        document.querySelectorAll(".time-slot").forEach(slot => {
-            slot.addEventListener("click", function() {
-                chonGio(this.innerText.trim());
-            });
-        });
-    },
-    error: function () {
-        alert("Không thể tải lịch. Vui lòng thử lại.");
-    }
-
+                    let availableSlots = response.data.result;
+                    document.querySelectorAll(".time-slot").forEach(slot => {
+                        let time = slot.innerText.trim() + ":00";
+                        if (availableSlots[time] === true) {
+                            slot.classList.remove("disabled");
+                            slot.addEventListener("click", function () {
+                                selectedTime = this.innerText.trim();
+                                selectTimeSlot(this);
+                            });
+                        }
+                    });
+                },
+                error: function () {
+                    alert("Không thể tải lịch. Vui lòng thử lại.");
+                }
             });
         }
-            function chonGio(time) {
-        let slots = document.querySelectorAll(".time-slot");
 
-        slots.forEach(slot => {
-            if (slot.innerText.trim() === time) {
-                if (slot.classList.contains("disabled")) return; // Không chọn nếu bị vô hiệu hóa
+        function selectTimeSlot(slot) {
+            document.querySelectorAll(".time-slot").forEach(s => {
+                s.style.backgroundColor = ''; // Xóa màu nền
+                s.style.color = ''; // Xóa màu chữ
+            });
 
-                slots.forEach(s => s.classList.remove("selected")); // Xóa trạng thái chọn trước đó
-                slot.classList.add("selected"); // Đánh dấu khung giờ đã chọn
+            slot.style.backgroundColor = '#4caf50'; // Màu nền khi chọn
+            slot.style.color = 'white'; // Màu chữ khi chọn
 
-                selectedTime = time; // Lưu thời gian đã chọn
-                console.log("Giờ đã chọn:", selectedTime);
+            selectedTime = slot.innerText.trim();
+            $("#btnPayment").show(); // Hiển thị nút thanh toán
+        }
+
+        function payment() {
+            let form = document.createElement("form");
+            form.method = "POST";
+            form.action = "/Bookings/BookingService";
+            form.style.display = "none";
+
+            function createHiddenInput(name, value) {
+                let input = document.createElement("input");
+                input.type = "hidden";
+                input.name = name;
+                input.value = value;
+                return input;
             }
-        });
-    }
 
-        function thanhToan() {
-        if (!selectedDate) {
-            alert("Vui lòng chọn đầy đủ chuyên viên, ngày và giờ trước khi thanh toán!");
-            return;
+            form.appendChild(createHiddenInput("ServiceId", document.getElementById("serviceId").value));
+            form.appendChild(createHiddenInput("TherapistId", selectedChuyenVienId));
+            form.appendChild(createHiddenInput("SelectedDate", selectedDate));
+            form.appendChild(createHiddenInput("SelectedTime", selectedTime));
+
+            document.body.appendChild(form);
+            form.submit();
         }
-
-        let form = document.createElement("form");
-        form.method = "POST";
-        form.action = "/Bookings/BookingService"; // Đường dẫn tới Controller
-        form.style.display = "none";
-
-        // Tạo input để gửi dữ liệu
-        function createHiddenInput(name, value) {
-            let input = document.createElement("input");
-            input.type = "hidden";
-            input.name = name;
-            input.value = value;
-            return input;
-        }
-
-        form.appendChild(createHiddenInput("ServiceId", document.getElementById("serviceId").value));
-        form.appendChild(createHiddenInput("TherapistId", selectedChuyenVienId));
-        form.appendChild(createHiddenInput("SelectedDate", selectedDate)); // "yyyy-MM-dd"
-        form.appendChild(createHiddenInput("SelectedTime", selectedTime)); // "HH:mm"
-
-        document.body.appendChild(form);
-        form.submit(); // Submit form
-    }
-
-
 
         window.selectTherapist = selectTherapist;
         window.selectDate = selectDate;
-        window.thanhToan = thanhToan;
+        window.payment = payment;
+        window.loadCalendar = loadCalendar;
+
+        // Gọi loadCalendar ngay khi trang tải lần đầu
+        loadCalendar();
     });
-        function thanhToan() {
-        if (!selectedDate) {
-                alert("Vui lòng chọn đầy đủ chuyên viên, ngày và giờ trước khi thanh toán!");
-                return;
-            }
-
-            let serviceId = document.getElementById("serviceId").value;
-
-            let bookingData = {
-                serviceId: serviceId,
-                therapistId: selectedChuyenVienId,
-                selectedDate: selectedDate,
-                selectedTime: selectedTime
-            };
-
-        console.log("bookingData", bookingData);
-
-        // Tạo form động
-        let form = document.createElement("form");
-        form.method = "POST";
-        form.action = "/Bookings/BookingService"; // URL của controller xử lý Booking
-        form.style.display = "none"; // Ẩn form để không ảnh hưởng giao diện
-
-        // Duyệt qua bookingData và tạo input hidden
-        for (let key in bookingData) {
-            if (bookingData.hasOwnProperty(key)) {
-                let input = document.createElement("input");
-                input.type = "hidden";
-                input.name = key;
-                input.value = bookingData[key];
-                form.appendChild(input);
-            }
-        }
-
-        // Thêm form vào body và submit
-        document.body.appendChild(form);
-        form.submit();
-    }
 
 </script>
 <script>
-           $(document).ready(function () {
-        let currentPage = 1;
-        const pageSize = 4;
+        function prevWeek() {
+        let newStart = new Date(currentWeekStart);
+        newStart.setDate(currentWeekStart.getDate() - 7);
 
-        function loadTherapists(page) {
-            $.ajax({
-                url: `/Bookings/GetTherapists?page=${page}&pageSize=${pageSize}`,
-                type: "GET",
-                success: function (data) {
-                    $("#therapistContainer").html(data);
+        if (newStart >= today) {
+            currentWeekStart = newStart;
+            loadCalendar();
+        } else {
+            alert("Không thể quay lại tuần trước!");
+        }
     }
+
+    function nextWeek() {
+        let newStart = new Date(currentWeekStart);
+        newStart.setDate(currentWeekStart.getDate() + 7);
+
+        let maxDate = new Date();
+        maxDate.setDate(today.getDate() + 30);
+
+        if (newStart <= maxDate) {
+            currentWeekStart = newStart;
+            loadCalendar();
+        } else {
+            alert("Không thể chọn tuần xa hơn!");
+        }
+    }
+        window.prevWeek = prevWeek;
+    window.nextWeek = nextWeek
+</script>
+<script>
+
+        let currentPage = 1;
+
+        // Hàm tải các therapist từ server
+        function loadTherapists(page) {
+
+            $.ajax({
+                url: `/Bookings/GetTherapistsToBooking?page=${page}`,
+                type: "GET",
+                beforeSend: function () {
+                    $("#therapistContainer").html("<p class='text-center'>Loading...</p>");
+                },
+                success: function (data) {
+                    if (!data.trim()) {
+                        $("#therapistContainer").html("<p class='text-center'>No therapists available.</p>");
+                    } else {
+                        $("#therapistContainer").html(data);
+                        currentPage = page;
+
+                    }
+                },
+                error: function () {
+                    $("#therapistContainer").html("<p class='text-center text-danger'>Error loading therapists.</p>");
+                }
             });
         }
+            function changePage(direction) {
+        console.log(`Changing page by: ${direction}`); // Kiểm tra sự thay đổi trang
+        loadTherapists(currentPage + direction);
+    }
+        
 
-        // Load dữ liệu lần đầu
-        loadTherapists(currentPage);
 
-        // Xử lý sự kiện chuyển trang
-        $(".carousel-control-prev").click(function () {
-            if (currentPage > 1) {
-                currentPage--;
-                loadTherapists(currentPage);
-            }
+        // Xử lý khi người dùng click vào nút "autoSelectBtn"
+        $("#autoSelectBtn").click(function () {
+            // Chuyển đổi trạng thái nút thanh toán
+            $("#btnPayment").show();
+            $("#autoSelectBtn").hide();
+            $("#therapistContainer").html(`
+                <div class="alert alert-info text-center">
+                    The system has arranged a specialist for you!
+                </div>
+            `);
         });
 
-        $(".carousel-control-next").click(function () {
-            currentPage++;
-            loadTherapists(currentPage);
+        $(document).ready(function () {
+            loadTherapists(1);
         });
-    });
+
+
 
 </script>
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const therapistButtons = document.querySelectorAll(".therapist-select-btn"); // Nút chọn therapist
+        const calendarContainer = document.getElementById("calendar-container");
 
+        // Ẩn lịch ban đầu
+        calendarContainer.style.display = "none";
+
+        therapistButtons.forEach(button => {
+            button.addEventListener("click", function () {
+                // Khi người dùng chọn therapist
+                calendarContainer.style.display = "block";
+            });
+        });
+    });
+</script>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
