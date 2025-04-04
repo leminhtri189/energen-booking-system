@@ -7,159 +7,168 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using BusinessObject.Entities;
 using DataAccessLayer.Context;
+using BusinessLogicLayer.Services.Interface;
+using DataAccessLayer.Commons;
 
 namespace Web.Controllers
 {
     public class TherapistsController : Controller
     {
-        private readonly ApplicationDbContext _context;
+        private readonly ITherapistService _service;
 
-        public TherapistsController(ApplicationDbContext context)
+        public TherapistsController(ITherapistService therapistService)
         {
-            _context = context;
+            _service = therapistService;
         }
 
         // GET: Therapists
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(int page = 1, string? searchTerm = null)
         {
-            var applicationDbContext = _context.Therapists.Include(t => t.UserNavigation);
-            return View(await applicationDbContext.ToListAsync());
-        }
-
-        // GET: Therapists/Details/5
-        public async Task<IActionResult> Details(Guid? id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var therapist = await _context.Therapists
-                .Include(t => t.UserNavigation)
-                .FirstOrDefaultAsync(m => m.Id == id);
-            if (therapist == null)
-            {
-                return NotFound();
-            }
-
-            return View(therapist);
-        }
-
-        // GET: Therapists/Create
-        public IActionResult Create()
-        {
-            ViewData["UserId"] = new SelectList(_context.Users, "Id", "Email");
+            PaginationResult<Therapist> result = await _service.GetTherapistPaginatedAsync(searchTerm, page, 10);
+            ViewData["therapists"] = result;
             return View();
         }
 
-        // POST: Therapists/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("ExperienceYears,Biography,Status,UserId,Id,CreatedAt,LastUpdate")] Therapist therapist)
+        public async Task<IActionResult> Details(Guid therapist_id)
         {
-            if (ModelState.IsValid)
-            {
-                therapist.Id = Guid.NewGuid();
-                _context.Add(therapist);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
-            }
-            ViewData["UserId"] = new SelectList(_context.Users, "Id", "Email", therapist.UserId);
-            return View(therapist);
+            ViewData["therapists"] = await _service.GetTherapistWithIdAsync(therapist_id); 
+            return View(await _service.GetTherapistWithIdAsync(therapist_id));
         }
 
-        // GET: Therapists/Edit/5
-        public async Task<IActionResult> Edit(Guid? id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
+        //// GET: Therapists/Details/5
+        //public async Task<IActionResult> Details(Guid? id)
+        //{
+        //    if (id == null)
+        //    {
+        //        return NotFound();
+        //    }
 
-            var therapist = await _context.Therapists.FindAsync(id);
-            if (therapist == null)
-            {
-                return NotFound();
-            }
-            ViewData["UserId"] = new SelectList(_context.Users, "Id", "Email", therapist.UserId);
-            return View(therapist);
-        }
+        //    var therapist = await _context.Therapists
+        //        .Include(t => t.UserNavigation)
+        //        .FirstOrDefaultAsync(m => m.Id == id);
+        //    if (therapist == null)
+        //    {
+        //        return NotFound();
+        //    }
 
-        // POST: Therapists/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(Guid id, [Bind("ExperienceYears,Biography,Status,UserId,Id,CreatedAt,LastUpdate")] Therapist therapist)
-        {
-            if (id != therapist.Id)
-            {
-                return NotFound();
-            }
+        //    return View(therapist);
+        //}
 
-            if (ModelState.IsValid)
-            {
-                try
-                {
-                    _context.Update(therapist);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!TherapistExists(therapist.Id))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
-                return RedirectToAction(nameof(Index));
-            }
-            ViewData["UserId"] = new SelectList(_context.Users, "Id", "Email", therapist.UserId);
-            return View(therapist);
-        }
+        //// GET: Therapists/Create
+        //public IActionResult Create()
+        //{
+        //    ViewData["UserId"] = new SelectList(_context.Users, "Id", "Email");
+        //    return View();
+        //}
 
-        // GET: Therapists/Delete/5
-        public async Task<IActionResult> Delete(Guid? id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
+        //// POST: Therapists/Create
+        //// To protect from overposting attacks, enable the specific properties you want to bind to.
+        //// For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+        //[HttpPost]
+        //[ValidateAntiForgeryToken]
+        //public async Task<IActionResult> Create([Bind("ExperienceYears,Biography,Status,UserId,Id,CreatedAt,LastUpdate")] Therapist therapist)
+        //{
+        //    if (ModelState.IsValid)
+        //    {
+        //        therapist.Id = Guid.NewGuid();
+        //        _context.Add(therapist);
+        //        await _context.SaveChangesAsync();
+        //        return RedirectToAction(nameof(Index));
+        //    }
+        //    ViewData["UserId"] = new SelectList(_context.Users, "Id", "Email", therapist.UserId);
+        //    return View(therapist);
+        //}
 
-            var therapist = await _context.Therapists
-                .Include(t => t.UserNavigation)
-                .FirstOrDefaultAsync(m => m.Id == id);
-            if (therapist == null)
-            {
-                return NotFound();
-            }
+        //// GET: Therapists/Edit/5
+        //public async Task<IActionResult> Edit(Guid? id)
+        //{
+        //    if (id == null)
+        //    {
+        //        return NotFound();
+        //    }
 
-            return View(therapist);
-        }
+        //    var therapist = await _context.Therapists.FindAsync(id);
+        //    if (therapist == null)
+        //    {
+        //        return NotFound();
+        //    }
+        //    ViewData["UserId"] = new SelectList(_context.Users, "Id", "Email", therapist.UserId);
+        //    return View(therapist);
+        //}
 
-        // POST: Therapists/Delete/5
-        [HttpPost, ActionName("Delete")]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(Guid id)
-        {
-            var therapist = await _context.Therapists.FindAsync(id);
-            if (therapist != null)
-            {
-                _context.Therapists.Remove(therapist);
-            }
+        //// POST: Therapists/Edit/5
+        //// To protect from overposting attacks, enable the specific properties you want to bind to.
+        //// For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+        //[HttpPost]
+        //[ValidateAntiForgeryToken]
+        //public async Task<IActionResult> Edit(Guid id, [Bind("ExperienceYears,Biography,Status,UserId,Id,CreatedAt,LastUpdate")] Therapist therapist)
+        //{
+        //    if (id != therapist.Id)
+        //    {
+        //        return NotFound();
+        //    }
 
-            await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
-        }
+        //    if (ModelState.IsValid)
+        //    {
+        //        try
+        //        {
+        //            _context.Update(therapist);
+        //            await _context.SaveChangesAsync();
+        //        }
+        //        catch (DbUpdateConcurrencyException)
+        //        {
+        //            if (!TherapistExists(therapist.Id))
+        //            {
+        //                return NotFound();
+        //            }
+        //            else
+        //            {
+        //                throw;
+        //            }
+        //        }
+        //        return RedirectToAction(nameof(Index));
+        //    }
+        //    //ViewData["UserId"] = new SelectList(_context.Users, "Id", "Email", therapist.UserId);
+        //    return View(therapist);
+        //}
 
-        private bool TherapistExists(Guid id)
-        {
-            return _context.Therapists.Any(e => e.Id == id);
-        }
+        //// GET: Therapists/Delete/5
+        //public async Task<IActionResult> Delete(Guid? id)
+        //{
+        //    if (id == null)
+        //    {
+        //        return NotFound();
+        //    }
+
+        //    var therapist = await _context.Therapists
+        //        .Include(t => t.UserNavigation)
+        //        .FirstOrDefaultAsync(m => m.Id == id);
+        //    if (therapist == null)
+        //    {
+        //        return NotFound();
+        //    }
+
+        //    return View(therapist);
+        //}
+
+        //// POST: Therapists/Delete/5
+        //[HttpPost, ActionName("Delete")]
+        //[ValidateAntiForgeryToken]
+        //public async Task<IActionResult> DeleteConfirmed(Guid id)
+        //{
+        //    var therapist = await _context.Therapists.FindAsync(id);
+        //    if (therapist != null)
+        //    {
+        //        _context.Therapists.Remove(therapist);
+        //    }
+
+        //    await _context.SaveChangesAsync();
+        //    return RedirectToAction(nameof(Index));
+        //}
+
+        //private bool TherapistExists(Guid id)
+        //{
+        //    return _context.Therapists.Any(e => e.Id == id);
+        //}
     }
 }

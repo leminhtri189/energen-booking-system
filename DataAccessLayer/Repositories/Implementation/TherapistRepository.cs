@@ -1,5 +1,6 @@
 ﻿using BusinessObject.Entities;
 using BusinessObject.Enums;
+using DataAccessLayer.Commons;
 using DataAccessLayer.Commons.GenericRepo;
 using DataAccessLayer.Context;
 using DataAccessLayer.Repositories.Interface;
@@ -35,6 +36,26 @@ namespace DataAccessLayer.Repositories.Implementation
             }
 
             return await query.ToListAsync();
+        }
+
+        public async Task<PaginationResult<Therapist>> GetTherapistsPaginated(int page, int page_size, string? searchKey = null)
+        {
+            return await base.AsPaginatedAsync(page, page_size, 
+                x => searchKey != null ? x.Biography!.ToLower().Contains(searchKey.ToLower()) : true,
+                x => x.OrderByDescending(x => x.CreatedAt),
+                x => x.Include(x => x.UserNavigation));
+        }
+
+        public async Task<Therapist?> GetTherapistWIthId(Guid id)
+        {
+            return await context
+                .Set<Therapist>()
+                .Include(x => x.UserNavigation)
+                .Include(x => x.BookingNavigation)
+                .ThenInclude(x => x.FeedbackNavigation)
+                .Include(x => x.BookingNavigation)
+                .ThenInclude(x => x.CustomerNavigation)
+                .FirstOrDefaultAsync(x=> x.Id == id);
         }
     }
 }

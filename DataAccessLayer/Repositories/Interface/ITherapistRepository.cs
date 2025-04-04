@@ -1,5 +1,6 @@
 ﻿using BusinessObject.Entities;
 using Castle.Components.DictionaryAdapter;
+using DataAccessLayer.Commons;
 using DataAccessLayer.Commons.GenericRepo;
 using System;
 using System.Collections.Generic;
@@ -11,6 +12,10 @@ namespace DataAccessLayer.Repositories.Interface
 {
     public interface ITherapistRepository :  IGenericRepository<Therapist> 
     {
+        Task<Therapist> GetTherapistWIthId(Guid id);
+
         Task<ICollection<Therapist>> GetTherapists(string? searchKey, int? pageNumber,int? pageSize );
+
+        Task<PaginationResult<Therapist>> GetTherapistsPaginated(int page, int page_size, string? searchKey = null);
     }
 }
