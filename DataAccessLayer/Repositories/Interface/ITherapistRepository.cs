@@ -12,6 +12,8 @@ namespace DataAccessLayer.Repositories.Interface
 {
     public interface ITherapistRepository :  IGenericRepository<Therapist> 
     {
+        Task<Therapist> GetTherapistWIthId(Guid id);
+
         Task<ICollection<Therapist>> GetTherapists(string? searchKey, int? pageNumber,int? pageSize );
 
         Task<PaginationResult<Therapist>> GetTherapistsPaginated(int page, int page_size);

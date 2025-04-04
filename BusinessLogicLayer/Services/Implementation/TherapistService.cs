@@ -1,7 +1,7 @@
 ﻿using BusinessLogicLayer.Services.Interface;
 using BusinessObject.Entities;
-using BusinessObject.Enums;
 using DataAccessLayer.Commons;
+using BusinessObject.Enums;
 using DataAccessLayer.Repositories.Interface;
 using DataAccessLayer.UoW;
 using Google.Apis.Util;
@@ -20,6 +20,17 @@ namespace BusinessLogicLayer.Services.Implementation
         {
             _unitOfWork = unitOfWork;
         }
+
+        public async Task<PaginationResult<Therapist>> GetTherapistPaginatedAsync( int page, int page_size)
+        {
+            return await _unitOfWork.Therapists.GetTherapistsPaginated(page, page_size);
+        }
+
+        public Task<PaginationResult<Therapist>> GetTherapistPaginatedAsync(string? searchKey, int page, int page_size)
+        {
+            throw new NotImplementedException();
+        }
+
         public async Task<ICollection<Therapist>> GetTherapists(string? searchKey, int? pageNumber, int? pageSize) => await
             _unitOfWork.Therapists.GetTherapists(searchKey, pageNumber, pageSize);
 
@@ -36,5 +47,9 @@ namespace BusinessLogicLayer.Services.Implementation
 
         }
 
+        public async Task<Therapist> GetTherapistWithIdAsync(Guid id)
+        {
+            return await _unitOfWork.Therapists.GetTherapistWIthId(id);
+        }
     }
 }
