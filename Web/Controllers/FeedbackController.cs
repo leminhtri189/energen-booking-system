@@ -1,8 +1,8 @@
 ﻿using BusinessLogicLayer.Commons;
 using BusinessLogicLayer.Services.Interface;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Data;
-using System.Web.Mvc;
 using Web.Models.Feedback;
 
 namespace Web.Controllers
