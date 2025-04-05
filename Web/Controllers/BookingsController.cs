@@ -40,7 +40,7 @@ namespace Web.Controllers
             _hubContext = hubContext;
         }
 
-        // GET: Bookings
+        [Authorize(Roles = "4")]
         public IActionResult Index(Guid id, string? searchKey, int? page)
         {
 
@@ -66,7 +66,7 @@ namespace Web.Controllers
             return PartialView("_TherapistPartial", therapists);
         }
 
-        [Authorize]
+        [Authorize(Roles = "4")]
         public async Task<IActionResult> BookingService([FromForm] BookingServiceViewModel bookingViewModel)
         {
             if (!User.Identity.IsAuthenticated) // Kiểm tra nếu chưa đăng nhập

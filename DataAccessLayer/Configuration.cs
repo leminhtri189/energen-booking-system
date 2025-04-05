@@ -19,6 +19,7 @@ namespace DataAccessLayer
 
             services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
             services.AddScoped<IUnitOfWork, UnitOfWork>();
+            services.AddScoped<IBlogRepository, BlogRepository>();
             services.AddScoped<IServiceRepository, ServiceRepository>();
             services.AddScoped<IQuestionRepository, QuestionRepository>();
             services.AddScoped<ITherapistRepository, TherapistRepository>();

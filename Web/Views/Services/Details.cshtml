@@ -67,9 +67,9 @@
             </div>
 
             <!-- Mô tả dịch vụ -->
-            <div class="service-description mt-3">
+            <div class="service-description mt-3" style="max-width: 100%; word-wrap: break-word; overflow-wrap: break-word;">
                 <h5>Description</h5>
-                <p>@Model.Description</p>
+                <p style="max-width: 100%; word-wrap: break-word; overflow-wrap: break-word;">@Model.Description</p>
             </div>
         </div>
 
@@ -94,11 +94,11 @@
                         </div>
                     }
                 </div>
-            } *@
+            }
             else
             {
                 <p class="text-muted">No reviews yet. Be the first to leave a review!</p>
-            }
+            } *@
         </div>
     </div>
 </div>

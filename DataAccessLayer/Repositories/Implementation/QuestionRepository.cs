@@ -35,9 +35,13 @@ namespace DataAccessLayer.Repositories.Implementation
             }
 
             var skinTypeCounts = questionOptions
-                .SelectMany(qo => qo.SkinTypeNavigation)
-                .GroupBy(st => st)
-                .ToDictionary(g => g.Key, g => g.Count());
+    .SelectMany(qo => qo.SkinTypeNavigation)
+    .GroupBy(st => st)
+    .ToDictionary(
+        g => g.Key,
+        g => g.Count()
+    );
+
 
             int totalSelections = skinTypeCounts.Values.Sum();
 

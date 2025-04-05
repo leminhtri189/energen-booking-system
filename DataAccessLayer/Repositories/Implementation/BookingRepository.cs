@@ -47,7 +47,7 @@ namespace DataAccessLayer.Repositories.Implementation
                 throw new ArgumentException("Invalid date format", nameof(date));
             }
 
-
+            selectedDate = selectedDate.AddDays(1);
             var schedules = await ((ApplicationDbContext)context).Bookings
                 .Where(b => b.TherapistId == therapistId && b.ReservedDate == selectedDate && b.TransactionNavigation.Status ==PaymentStatus.Sussces)
                 .ToListAsync();

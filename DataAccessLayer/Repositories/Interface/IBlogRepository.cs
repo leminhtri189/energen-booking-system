@@ -3,7 +3,7 @@ using DataAccessLayer.Commons.GenericRepo;
 
 namespace DataAccessLayer.Repositories.Interface
 {
-    internal interface IBlogRepository : IGenericRepository<Blog>
+    public interface IBlogRepository : IGenericRepository<Blog>
     {
     }
 }

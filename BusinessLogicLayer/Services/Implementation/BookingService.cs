@@ -40,7 +40,7 @@ namespace BusinessLogicLayer.Services.Implementation
             var service = await _unitOfWork.GenericRepository<Service>().GetFirstAsync(se => se.Id == booking.ServiceId);
            booking.Id = Guid.NewGuid();
             booking.UserId = userId;
-            booking.ReservedEndTime = booking.ReservedEndTime.AddMinutes(service.Duration);
+            booking.ReservedEndTime = booking.ReservedStartTime.AddMinutes(service.Duration);
            await _unitOfWork.GenericRepository<Booking>().AddAsync(booking);
             await _unitOfWork.CompleteAsync();
             returnAction = QueryHelpers.AddQueryString(returnAction, "key", booking.Id.ToString());

@@ -131,6 +131,11 @@ namespace DataAccessLayer.Commons.GenericRepo
             return await Set.FindAsync(id);
         }
 
+        public async Task<T?> GetByIdAsync(Guid id, Func<IQueryable<T>, IIncludableQueryable<T, object>> includes)
+        {
+            return await includes(Set.AsQueryable()).FirstOrDefaultAsync(x => x.Id == id);
+        }
+
         public virtual void Update(T entity)
         {
             Set.Update(entity);
@@ -160,7 +165,5 @@ namespace DataAccessLayer.Commons.GenericRepo
                 TotalPage = data.Count() / page_size,
             };
         }
-
-
     }
 }

@@ -32,8 +32,6 @@ namespace Web.Controllers
 
         public async Task<IActionResult> PostFeedback(BookingFeedbackViewModel feedback)
         {
-            Console.WriteLine(feedback.TherapistFeedback);
-            Console.WriteLine(feedback.ServiceFeedback);
 
             ServiceResult result = await _service.CreateFeedback(feedback.BookingId, feedback.TherapistRating, feedback.ServiceRating, feedback.TherapistFeedback, feedback.ServiceFeedback);
 

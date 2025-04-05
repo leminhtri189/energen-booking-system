@@ -5,9 +5,60 @@
 }
 
 <style>
+    .therapist-card.selected-therapist {
+        border: 3px solid #0d6efd !important;
+        background-color: #e7f1ff !important;
+        box-shadow: 0 0 10px rgba(13, 110, 253, 0.5);
+    }
 
+    .select-btn.selected {
+        background-color: #198754 !important;
+        border-color: #198754 !important;
+    }
 
+    .day.active {
+        background-color: #4caf50 !important;
+        color: white !important;
+        border: 2px solid #388e3c !important;
+        box-shadow: 0 0 10px rgba(76, 175, 80, 0.5);
+        position: relative;
+    }
+
+        .day.active::after {
+            content: "✓";
+            position: absolute;
+            top: 5px;
+            right: 8px;
+            font-size: 14px;
+            color: white;
+            background-color: #2e7d32;
+            border-radius: 50%;
+            width: 18px;
+            height: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+    .time-slot.disabled {
+        background-color: #e0e0e0; /* màu xám nhạt */
+        color: #999; /* chữ mờ hơn */
+        cursor: not-allowed;
+        opacity: 0.6; /* làm mờ tổng thể */
+        pointer-events: none; /* không cho click */
+    }
+
+    .time-slot {
+        transition: background-color 0.3s, color 0.3s;
+    }
+
+        .time-slot:not(.disabled):hover {
+            background-color: #d0f0ff;
+            color: #000;
+            cursor: pointer;
+        }
 </style>
+
 
 <input type="hidden" id="serviceId" value="@Model.Id" />
 <div class="container">
@@ -57,7 +108,8 @@
             <span id="week-label"></span>
             <button id="next-week" onclick="nextWeek()">❯</button>
         </div>
-        <div id="days-container" style="width: 100%; display: flex; justify-content: center; align-items: center; margin: 20px">
+        <div id="days-container" style="width: 100%; display: flex; justify-content: center; align-items: center;margin: 20px 0;
+">
             <div id="days"></div>
         </div>
 
@@ -109,6 +161,27 @@
             document.getElementById("calendar-container").style.display = "block";
             $("#select-therapist-msg").hide();
             loadCalendar();
+            document.querySelectorAll('.therapist-card').forEach(card => {
+            card.classList.remove('selected-therapist');
+        });
+
+        document.querySelectorAll('.select-btn').forEach(btn => {
+            btn.textContent = 'Select';
+            btn.classList.remove('selected');
+        });
+
+        // Đánh dấu therapist được chọn
+        const selectedCard = document.querySelector(`.therapist-card[data-therapist-id="${chuyenVienId}"]`);
+        const selectedBtn = document.querySelector(`.select-btn[data-therapist-id="${chuyenVienId}"]`);
+
+        if (selectedCard) {
+            selectedCard.classList.add('selected-therapist');
+        }
+
+        if (selectedBtn) {
+            selectedBtn.textContent = 'Selected';
+            selectedBtn.classList.add('selected');
+        }
         }
 
         function loadCalendar() {
@@ -129,9 +202,8 @@
                     let formattedDate = tempDate.toISOString().split('T')[0];
                     let isPast = tempDate < today;
                     let isSelected = formattedDate === selectedDate;
-
                         daysHtmlContent += `
-        <div class="day" style="
+        <div class="day ${isSelected ? 'active' : ''}" style="
             width: 60px; height: 80px;
             display: flex; flex-direction: column; justify-content: center; align-items: center;
             text-align: center;
@@ -140,7 +212,6 @@
             border: 1px solid #ccc;
             border-radius: 8px;
             box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-            ${isSelected ? 'background-color: #4caf50; color: white;' : ''}
             ${isPast ? 'color: gray; cursor: not-allowed;' : 'cursor: pointer;'}
         " onclick="${!isPast ? `selectDate('${formattedDate}', event)` : ''}">
             <span style="font-weight: bold;">${tempDate.getDate()}</span>
@@ -148,8 +219,9 @@
         </div>
     `;
 
+
                 }
-                tempDate.setDate(tempDate.getDate() + 1);
+                tempDate.setDate(tempDate.getDate()+1);
             }
 
                 document.getElementById("days").innerHTML = `
@@ -193,7 +265,7 @@
             document.getElementById("afternoon-slots").innerHTML = afternoonHtml;
 
             if (!selectedChuyenVienId) return;
-
+            console.log("đáasda",date);
             $.ajax({
                 url: '/Bookings/GetAvailableTimeSlots',
                 method: 'GET',

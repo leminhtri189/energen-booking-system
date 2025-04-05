@@ -21,15 +21,11 @@ namespace BusinessLogicLayer.Services.Implementation
             _unitOfWork = unitOfWork;
         }
 
-        public async Task<PaginationResult<Therapist>> GetTherapistPaginatedAsync( int page, int page_size)
+        public async Task<PaginationResult<Therapist>> GetTherapistPaginatedAsync(string? searchKey, int page, int page_size)
         {
             return await _unitOfWork.Therapists.GetTherapistsPaginated(page, page_size);
         }
 
-        public Task<PaginationResult<Therapist>> GetTherapistPaginatedAsync(string? searchKey, int page, int page_size)
-        {
-            throw new NotImplementedException();
-        }
 
         public async Task<ICollection<Therapist>> GetTherapists(string? searchKey, int? pageNumber, int? pageSize) => await
             _unitOfWork.Therapists.GetTherapists(searchKey, pageNumber, pageSize);

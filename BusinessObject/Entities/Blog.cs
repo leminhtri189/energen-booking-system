@@ -14,7 +14,7 @@ namespace BusinessObject.Entities
         [Column("thumbnail", TypeName = "VARCHAR(200)")]
         public string Thumbnail { get; set; } = string.Empty;
 
-        [ForeignKey(nameof(User)), Column("author_id")]
+        [ForeignKey(nameof(UserNavigation)), Column("author_id")]
         public Guid AuthorId { get; set; }
 
         [Column("status")]

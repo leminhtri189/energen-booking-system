@@ -19,7 +19,6 @@
 
                                     <h5 class="fw-bold">@therapist.UserNavigation.FullName</h5>
                                     <p class="text-muted">Experience: @therapist.ExperienceYears years</p>
-                                    <p class="text-warning">★★★★★</p>
 
                                     <p class="bio-text text-truncate"
                                        style="display: -webkit-box;
@@ -35,12 +34,14 @@
 
 
                                     <div class="d-flex justify-content-between">
-                                        <a asp-controller="Therapists" asp-action="Details" asp-route-id="@therapist.Id"
+                                        <a asp-controller="Therapists" asp-action="Details" asp-route-therapist_id="@therapist.Id"
                                            class="btn btn-outline-primary btn-sm px-2 py-2">Details</a>
                                         <button onclick="selectTherapist('@therapist.Id')"
-                                                class="btn btn-primary btn-sm px-2 py-2">
+                                                class="btn btn-primary btn-sm px-2 py-2 select-btn"
+                                                data-therapist-id="@therapist.Id">
                                             Select
                                         </button>
+
                                     </div>
                                 </div>
                             </div>
