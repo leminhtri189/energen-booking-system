@@ -19,62 +19,58 @@ namespace DataAccessLayer.Repositories.Implementation
 {
     public class ServiceRepository : GenericRepository<Service>, IServiceRepository
     {
-        private readonly FirebaseStorage _firebaseStorage;
+        public ServiceRepository(ApplicationDbContext context) : base(context) { }
 
-        public ServiceRepository(ApplicationDbContext context, FirebaseStorage firebaseStorage) : base(context) {
-        _firebaseStorage = firebaseStorage;
-        }
-
-        public async Task CreateService(Service service, IFormFile thumbnail, ICollection<IFormFile> serviceImages, List<Guid> skinTypeIds)
+        public Task CreateService(Service service, IFormFile thumbnail, ICollection<IFormFile> serviceImage, List<Guid> SkinTypeIds)
         {
-            service.Id = Guid.NewGuid();
-
-            service.Thumbnail = await _firebaseStorage.Upload(thumbnail);
-
-            await ((ApplicationDbContext)context).Services.AddAsync(service);
-            await ((ApplicationDbContext)context).SaveChangesAsync();
-
-            if (serviceImages != null && serviceImages.Any())
-            {
-                var imageEntities = new List<ServiceImage>();
-
-                foreach (var file in serviceImages)
-                {
-                    if (file.Length > 0)
-                    {
-                        string fileUrl = await _firebaseStorage.Upload(file);
-                        imageEntities.Add(new ServiceImage
-                        {
-                            ImageUrl = fileUrl,
-                            ServiceId = service.Id
-                        });
-                    }
-                }
-
-                if (imageEntities.Count > 0)
-                {
-                    await ((ApplicationDbContext)context).ServiceImages.AddRangeAsync(imageEntities);
-                }
-            }
-
-            if (skinTypeIds != null && skinTypeIds.Any())
-            {
-                var skinTypes = await ((ApplicationDbContext)context).SkinTypes
-                                     .Where(st => skinTypeIds.Contains(st.Id))
-                                     .ToListAsync();
-
-                service.SkinTypes = skinTypes;
-            }
-
-            await context.SaveChangesAsync();
+            throw new NotImplementedException();
         }
 
+        //public async Task CreateService(Service service, IFormFile thumbnail, ICollection<IFormFile> serviceImages, List<Guid> skinTypeIds)
+        //{
+        //    service.Id = Guid.NewGuid();
+
+        //    service.Thumbnail = await _firebaseStorage.Upload(thumbnail);
+
+        //    await ((ApplicationDbContext)context).Services.AddAsync(service);
+        //    await ((ApplicationDbContext)context).SaveChangesAsync();
+
+        //    if (serviceImages != null && serviceImages.Any())
+        //    {
+        //        var imageEntities = new List<ServiceImage>();
+
+        //        foreach (var file in serviceImages)
+        //        {
+        //            if (file.Length > 0)
+        //            {
+        //                string fileUrl = await _firebaseStorage.Upload(file);
+        //                imageEntities.Add(new ServiceImage
+        //                {
+        //                    ImageUrl = fileUrl,
+        //                    ServiceId = service.Id
+        //                });
+        //            }
+        //        }
+
+        //        if (imageEntities.Count > 0)
+        //        {
+        //            await ((ApplicationDbContext)context).ServiceImages.AddRangeAsync(imageEntities);
+        //        }
+        //    }
+
+        //    if (skinTypeIds != null && skinTypeIds.Any())
+        //    {
+        //        var skinTypes = await ((ApplicationDbContext)context).SkinTypes
+        //                             .Where(st => skinTypeIds.Contains(st.Id))
+        //                             .ToListAsync();
+
+        //        service.SkinTypes = skinTypes;
+        //    }
+
+        //    await context.SaveChangesAsync();
+        //}
 
 
-        public async Task<PaginationResult<Service>> GetService(int page, int page_size, bool include_removed = false)
-        {
-            return await AsPaginatedAsync(page, page_size, filter: x => x.Status == ServiceStatus.Available);
-        }
 
         public async Task<PaginationResult<Service>> GetServices(string? searchKey, Guid? categoryId, Guid? skinTypeId, int? page, int? pageSize)
         {

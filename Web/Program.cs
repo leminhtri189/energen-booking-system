@@ -53,7 +53,6 @@ namespace Web
             // Add services to the container.
             appServices.AddSignalR();
             appServices.AddAutoMapper(typeof(Program));
-            appServices.AddAutoMapper(typeof(Program));
             builder.Services.AddControllersWithViews();
 
             var app = builder.Build();

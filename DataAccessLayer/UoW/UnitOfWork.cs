@@ -11,7 +11,6 @@ namespace DataAccessLayer.UoW
     public class UnitOfWork : IUnitOfWork
     {
         private readonly ApplicationDbContext _context;
-        private readonly FirebaseStorage _fileService;
         public IBookingRepository Bookings { get; private set; }
 
         public IQuestionRepository Questions { get; private set; }
@@ -26,12 +25,12 @@ namespace DataAccessLayer.UoW
 
         private Hashtable? _repositories;
 
-        public UnitOfWork(ApplicationDbContext context,FirebaseStorage firebaseStorage)
+        public UnitOfWork(ApplicationDbContext context)
         {
 
             _context = context;
             Therapists = new TherapistRepository(context);
-            Services = new ServiceRepository(context,firebaseStorage);
+            Services = new ServiceRepository(context);
             Bookings = new BookingRepository(context);
             Users = new UserRepository(context);
             Questions = new QuestionRepository(context);

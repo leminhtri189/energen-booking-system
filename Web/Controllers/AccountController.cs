@@ -138,7 +138,7 @@ namespace Web.Controllers
         public async Task<IActionResult> Logout()
         {
             await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
-            return RedirectToAction("Login", "Account"); // hoặc trang nào bạn muốn người dùng đến sau khi đăng xuất
+            return RedirectToAction("Login", "Account");
         }
 
 

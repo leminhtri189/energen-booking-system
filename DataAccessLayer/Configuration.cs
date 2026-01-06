@@ -23,7 +23,7 @@ namespace DataAccessLayer
             services.AddScoped<IServiceRepository, ServiceRepository>();
             services.AddScoped<IQuestionRepository, QuestionRepository>();
             services.AddScoped<ITherapistRepository, TherapistRepository>();
-            services.AddSingleton<FirebaseStorage>();
+           // services.AddSingleton<FirebaseStorage>();
 
             return services;
         }
